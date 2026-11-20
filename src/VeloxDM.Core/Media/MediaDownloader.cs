@@ -56,10 +56,20 @@ public sealed class MediaDownloader
             "--print-to-file", $"{TitleTag} %(title)s", resultFile,
             "--print-to-file", $"after_move:{FileTag} %(filepath)s", resultFile,
             "-P", job.Folder,
-            "-o", "%(title).150B [%(id)s].%(ext)s",
+            "-o", string.IsNullOrWhiteSpace(job.OutputName)
+                ? "%(title).150B [%(id)s].%(ext)s"
+                : Http.FileNameHelper.Sanitize(job.OutputName).Replace("%", "%%") + ".%(ext)s",
         };
         args.AddRange(MediaQuality.BuildArgs(job.MediaQuality, _tools.FfmpegPath is not null));
         if (!string.IsNullOrWhiteSpace(job.Referrer)) args.AddRange(["--referer", job.Referrer]);
+        if (job.Headers is not null)
+        {
+            foreach (var (name, value) in job.Headers)
+            {
+                if (name.Equals("User-Agent", StringComparison.OrdinalIgnoreCase)) args.AddRange(["--user-agent", value]);
+                else args.AddRange(["--add-header", $"{name}:{value}"]);
+            }
+        }
         args.AddRange(["--", job.Url]);
 
         int part = 0;

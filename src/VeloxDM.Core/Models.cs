@@ -39,12 +39,19 @@ public sealed class DownloadJob
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Url { get; set; } = "";
     public string? Referrer { get; set; }
+
+    /// <summary>Extra request headers captured from the page (Origin, User-Agent, Cookie...).</summary>
+    public Dictionary<string, string>? Headers { get; set; }
+
     public string FileName { get; set; } = "";
     public string Folder { get; set; } = "";
     public DownloadKind Kind { get; set; }
 
     /// <summary>Quality preset id for media downloads (see <see cref="Media.MediaQuality"/>).</summary>
     public string? MediaQuality { get; set; }
+
+    /// <summary>For media jobs: file name (without extension) to use instead of the stream's own title.</summary>
+    public string? OutputName { get; set; }
 
     public long? TotalBytes { get; set; }
     public bool SupportsRanges { get; set; }
@@ -107,8 +114,8 @@ public sealed class DownloadJob
         {
             return new DownloadJob
             {
-                Id = Id, Url = Url, Referrer = Referrer, FileName = FileName, Folder = Folder, Kind = Kind,
-                MediaQuality = MediaQuality, TotalBytes = TotalBytes, SupportsRanges = SupportsRanges,
+                Id = Id, Url = Url, Referrer = Referrer, Headers = Headers is null ? null : new(Headers), FileName = FileName, Folder = Folder, Kind = Kind,
+                MediaQuality = MediaQuality, OutputName = OutputName, TotalBytes = TotalBytes, SupportsRanges = SupportsRanges,
                 Segments = Segments.Select(s => s.Clone()).ToList(), Status = Status, Error = Error, NeedsSignIn = NeedsSignIn,
                 AddedUtc = AddedUtc, CompletedUtc = CompletedUtc, MediaDownloaded = MediaDownloaded,
             };

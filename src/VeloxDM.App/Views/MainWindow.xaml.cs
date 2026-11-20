@@ -278,6 +278,8 @@ public partial class MainWindow : Window
         Dispatcher.BeginInvoke(() => { if (_clipboard is not null) _clipboard.Suppress = false; }, DispatcherPriority.ApplicationIdle);
     }
 
+    private void Grabber_Click(object sender, RoutedEventArgs e) => GrabberWindow.Open(_manager, null);
+
     private void Tools_Click(object sender, RoutedEventArgs e) => new ToolsWindow(_manager) { Owner = this }.ShowDialog();
 
     private void Settings_Click(object sender, RoutedEventArgs e)

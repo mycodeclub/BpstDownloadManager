@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
 
 namespace VeloxDM.Core.Http;
@@ -16,12 +16,12 @@ public static class HttpProbe
     /// Requests the first byte range to learn the size, file name and whether the server
     /// accepts byte ranges (required for multi-connection downloads and resume).
     /// </summary>
-    public static async Task<ProbeResult> ProbeAsync(HttpClient http, string url, string? referrer, CancellationToken ct)
+    public static async Task<ProbeResult> ProbeAsync(HttpClient http, string url, string? referrer, CancellationToken ct, IReadOnlyDictionary<string, string>? headers = null)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(TimeSpan.FromSeconds(30));
 
-        using var req = HttpFactory.CreateRequest(url, referrer);
+        using var req = HttpFactory.CreateRequest(url, referrer, headers);
         req.Headers.Range = new RangeHeaderValue(0, null);
         var resp = await http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
 
@@ -29,7 +29,7 @@ public static class HttpProbe
         {
             // Some servers reject Range on empty files (416) or dislike ranged probes; retry plainly.
             resp.Dispose();
-            using var plain = HttpFactory.CreateRequest(url, referrer);
+            using var plain = HttpFactory.CreateRequest(url, referrer, headers);
             resp = await http.SendAsync(plain, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
             if (!resp.IsSuccessStatusCode)
             {

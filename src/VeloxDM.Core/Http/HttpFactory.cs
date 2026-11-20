@@ -56,10 +56,15 @@ public static class HttpFactory
         throw new HttpRequestException($"Could not connect to {ctx.DnsEndPoint.Host}: {last?.Message ?? "no addresses"}", last);
     }
 
-    public static HttpRequestMessage CreateRequest(string url, string? referrer, HttpMethod? method = null)
+    public static HttpRequestMessage CreateRequest(DownloadJob job) => CreateRequest(job.Url, job.Referrer, job.Headers);
+
+    public static HttpRequestMessage CreateRequest(string url, string? referrer, IReadOnlyDictionary<string, string>? headers = null)
     {
-        var req = new HttpRequestMessage(method ?? HttpMethod.Get, url);
-        req.Headers.TryAddWithoutValidation("User-Agent", UserAgent);
+        var req = new HttpRequestMessage(HttpMethod.Get, url);
+        if (headers is not null)
+            foreach (var (name, value) in headers)
+                req.Headers.TryAddWithoutValidation(name, value);
+        if (!req.Headers.Contains("User-Agent")) req.Headers.TryAddWithoutValidation("User-Agent", UserAgent);
         req.Headers.TryAddWithoutValidation("Accept", "*/*");
         req.Headers.TryAddWithoutValidation("Accept-Encoding", "identity");
         if (!string.IsNullOrWhiteSpace(referrer) && Uri.TryCreate(referrer, UriKind.Absolute, out var r))

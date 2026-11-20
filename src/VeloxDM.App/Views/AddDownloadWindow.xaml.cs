@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,10 +13,9 @@ namespace VeloxDM.App.Views;
 public partial class AddDownloadWindow : Window
 {
     private const string BlobHelp =
-        "blob: links only exist inside the browser tab that created them, so no external downloader can open them. " +
-        "Instead copy the address of the page that plays the video (VeloxDM will extract it with yt-dlp), or open the " +
-        "browser DevTools (F12) â†’ Network, filter for â€œm3u8â€ or â€œmpdâ€, and copy that stream URL here.";
-
+        "A blob: link is a temporary handle inside one browser tab, so it can't be downloaded directly. " +
+        "Open the page in the Video Grabber, press Play, and download the real stream it detects. " +
+        "(Or paste the page's own address here.)";
     private readonly DownloadManager _manager;
     private CancellationTokenSource? _analyzeCts;
     private DownloadKind _kind = DownloadKind.Http;
@@ -60,6 +59,7 @@ public partial class AddDownloadWindow : Window
     {
         ToolsPanel.Visibility = Visibility.Collapsed;
         SignInPanel.Visibility = Visibility.Collapsed;
+        GrabberPanel.Visibility = Visibility.Collapsed;
         switch (UrlClassifier.Classify(url))
         {
             case UrlKind.Invalid:
@@ -69,6 +69,7 @@ public partial class AddDownloadWindow : Window
 
             case UrlKind.Blob:
                 ShowState("blob", "This is a browser-internal blob: link.", BlobHelp, canStart: false);
+                ShowGrabberOffer($"Opens {GrabberWindow.OriginOfBlob(url) ?? "the site"}. Go to the video, press Play, then click Download.");
                 return;
 
             case UrlKind.Media:
@@ -97,9 +98,9 @@ public partial class AddDownloadWindow : Window
             SetName(probe.FileName);
             var size = probe.TotalBytes is > 0 ? Format.Bytes(probe.TotalBytes.Value) : "unknown size";
             var resume = probe.SupportsRanges
-                ? $"Resumable Â· up to {_manager.Settings.Connections} connections"
+                ? $"Resumable · up to {_manager.Settings.Connections} connections"
                 : "Server does not support resume: single connection";
-            ShowState("file", $"{probe.FileName} ({size})", $"{resume} Â· {probe.ContentType ?? "unknown type"}", canStart: true);
+            ShowState("file", $"{probe.FileName} ({size})", $"{resume} · {probe.ContentType ?? "unknown type"}", canStart: true);
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch (Exception ex)
@@ -124,7 +125,7 @@ public partial class AddDownloadWindow : Window
             var info = await _manager.Media.ProbeAsync(url, ct);
             ct.ThrowIfCancellationRequested();
             SetName(info.Title);
-            ShowState("video", info.Title, string.Join(" Â· ", new[] { info.Site, info.Duration }.NonEmpty()), canStart: true);
+            ShowState("video", info.Title, string.Join(" · ", new[] { info.Site, info.Duration }.NonEmpty()), canStart: true);
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch (MediaSignInRequiredException ex)
@@ -135,7 +136,20 @@ public partial class AddDownloadWindow : Window
         catch (Exception ex)
         {
             ShowState("video", "Could not read video information (you can still try).", ex.Message, canStart: true);
+            ShowGrabberOffer("Not a supported site? Open the page in the Video Grabber, press Play, and download the stream it detects.");
         }
+    }
+
+    private void ShowGrabberOffer(string text)
+    {
+        GrabberText.Text = text;
+        GrabberPanel.Visibility = Visibility.Visible;
+    }
+
+    private void Grabber_Click(object sender, RoutedEventArgs e)
+    {
+        GrabberWindow.Open(_manager, UrlBox.Text.Trim());
+        DialogResult = false; // the grabber takes over from here
     }
 
     private async void SignIn_Click(object sender, RoutedEventArgs e)

@@ -59,6 +59,12 @@
                     </StackPanel>
                 </Button>
                 <Border Width="1" Margin="8,6" Background="#30808080" />
+                <Button Style="{StaticResource ToolButton}" Click="Grabber_Click" ToolTip="Open a page and catch the video streams it plays (for blob: videos)">
+                    <StackPanel>
+                        <TextBlock Text="&#xE774;" FontFamily="{StaticResource IconFont}" FontSize="18" HorizontalAlignment="Center" />
+                        <TextBlock Text="Video grabber" />
+                    </StackPanel>
+                </Button>
                 <Button Style="{StaticResource ToolButton}" Click="Tools_Click" ToolTip="Install or update yt-dlp, FFmpeg and Deno">
                     <StackPanel>
                         <TextBlock Text="&#xE714;" FontFamily="{StaticResource IconFont}" FontSize="18" HorizontalAlignment="Center" />

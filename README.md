@@ -16,6 +16,8 @@ Copy a link anywhere in Windows and VeloxDM offers to download it. It uses many 
   - Quality presets: Best, MP4, 4K to 360p, MP3 or M4A audio.
   - HLS/DASH fragments download in parallel.
   - FFmpeg merges HD video and audio.
+- **YouTube sign-in** (built-in WebView2 window) for age-restricted, private and members-only videos. Firefox cookies and `cookies.txt` files also work.
+- **Video Grabber** for `blob:` players and sites yt-dlp doesn't support: catches HLS, DASH and MP4 streams while the page plays.
 - **One-click tool install.** yt-dlp, FFmpeg and Deno come from their official GitHub releases into `%LOCALAPPDATA%\VeloxDM\tools`.
 - **Queue.** Choose how many downloads run at once. Categories: Video, Music, Documents, Compressed, Programs, Images.
 - **Live segment map.** Shows each connection's progress for the selected download.
@@ -26,12 +28,17 @@ Copy a link anywhere in Windows and VeloxDM offers to download it. It uses many 
 
 ## About `blob:` URLs
 
-A `blob:https://site/…` address is an in-memory object that exists only inside the browser tab that created it. No external program can open it, so a downloader can't fetch it directly. To download such a video, do one of the following:
+A `blob:https://site/…` address is an in-memory object that exists only inside the browser tab that created it. No external program can open it, so a downloader can't fetch it directly. Behind the blob, the player loads a normal stream: usually an HLS (`.m3u8`) or DASH (`.mpd`) playlist, or an MP4.
 
-1. Copy the **page address** (the URL in the address bar). VeloxDM detects video pages and extracts the real stream with yt-dlp.
-2. Or open DevTools (F12), go to **Network**, filter for `m3u8` or `mpd`, and copy that stream URL into VeloxDM.
+**Video Grabber** (toolbar, or the button that appears when you paste a `blob:` link):
 
-Capturing these streams automatically needs a browser extension (see the roadmap).
+1. Open the video page in VeloxDM's built-in browser.
+2. Press Play.
+3. VeloxDM lists the real streams it sees on the network. Click **Download**.
+
+The page's Referer, Origin, User-Agent and cookies are passed along, so CDNs that check them still work. Pop-up windows are blocked.
+
+DRM-protected (copy-protected) videos, such as those on Netflix, Prime Video or Disney+, can't be downloaded. The grabber tells you when a page uses DRM.
 
 ## Build
 

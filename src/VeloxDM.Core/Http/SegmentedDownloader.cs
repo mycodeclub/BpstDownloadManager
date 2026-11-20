@@ -1,4 +1,4 @@
-using System.Buffers;
+﻿using System.Buffers;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
@@ -36,7 +36,7 @@ public sealed class SegmentedDownloader
         bool resumable = job.Segments.Count > 0 && job.TotalBytes is not null && File.Exists(job.TempPath);
         if (!resumable)
         {
-            var probe = await HttpProbe.ProbeAsync(_http, job.Url, job.Referrer, ct);
+            var probe = await HttpProbe.ProbeAsync(_http, job.Url, job.Referrer, ct, job.Headers);
             job.TotalBytes = probe.TotalBytes;
             job.SupportsRanges = probe.SupportsRanges && probe.TotalBytes > 0;
             if (string.IsNullOrWhiteSpace(job.FileName))
@@ -201,7 +201,7 @@ public sealed class SegmentedDownloader
             end = seg.End;
         }
 
-        using var req = HttpFactory.CreateRequest(job.Url, job.Referrer);
+        using var req = HttpFactory.CreateRequest(job);
         req.Headers.Range = new RangeHeaderValue(pos, end);
 
         using var stall = CancellationTokenSource.CreateLinkedTokenSource(ct);
@@ -268,7 +268,7 @@ public sealed class SegmentedDownloader
             {
                 lock (job.Sync) { seg.Downloaded = 0; seg.Active = true; }
 
-                using var req = HttpFactory.CreateRequest(job.Url, job.Referrer);
+                using var req = HttpFactory.CreateRequest(job);
                 using var stall = CancellationTokenSource.CreateLinkedTokenSource(ct);
                 stall.CancelAfter(StallTimeout);
                 using var resp = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, stall.Token);
