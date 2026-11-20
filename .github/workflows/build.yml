@@ -29,12 +29,12 @@ jobs:
         shell: pwsh
         run: |
           $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.TrimStart('v') } else { '0.1.0' }
-          dotnet publish src/VeloxDM.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:Version=$version -o publish
-          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$version" installer\VeloxDM.iss
+          dotnet publish src/BpstVideoDownloader.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:Version=$version -o publish
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$version" installer\BpstVideoDownloader.iss
 
       - uses: actions/upload-artifact@v4
         with:
-          name: VeloxDM-Setup
+          name: BpstVideoDownloader-Setup
           path: dist/*.exe
 
       - name: Publish GitHub Release

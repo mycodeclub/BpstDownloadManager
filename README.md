@@ -1,16 +1,20 @@
-# VeloxDM
+# BpstVideoDownloader
 
 **A free, open-source download manager for Windows, built with .NET 10 and WPF.**
 
-Copy a link anywhere in Windows and VeloxDM offers to download it. It uses many parallel connections and resumes after pauses, crashes or reboots. Video pages (YouTube and 1000+ other sites) and HLS/DASH streams go through [yt-dlp](https://github.com/yt-dlp/yt-dlp).
+A product of **BitProSoftTech** · [bitprosofttech.com](https://bitprosofttech.com) · +(91)-82-9910-1616
 
-> VeloxDM is an independent project. It is not affiliated with, endorsed by or derived from any commercial download manager. All code and artwork are original and MIT licensed.
+**Free download:** [bitprosofttech.com](https://bitprosofttech.com)
+
+Copy a link anywhere in Windows and BpstVideoDownloader offers to download it. It uses many parallel connections and resumes after pauses, crashes or reboots. Video pages (YouTube and 1000+ other sites) and HLS/DASH streams go through [yt-dlp](https://github.com/yt-dlp/yt-dlp).
+
+> BpstVideoDownloader is an independent project. It is not affiliated with, endorsed by or derived from any commercial download manager. All code and artwork are original and MIT licensed.
 
 ## Features
 
 - **Multi-connection downloads.** A file is split into byte ranges fetched in parallel (1–32 connections).
 - **Dynamic segmentation.** When a connection finishes early, it takes over half of the largest remaining range, so every connection stays busy until the end.
-- **Pause and resume.** Per-segment progress is saved, so downloads continue after pausing, closing the app or a crash. Retries use exponential backoff. If a server limits connections (HTTP 429/503), VeloxDM automatically drops to fewer connections.
+- **Pause and resume.** Per-segment progress is saved, so downloads continue after pausing, closing the app or a crash. Retries use exponential backoff. If a server limits connections (HTTP 429/503), BpstVideoDownloader automatically drops to fewer connections.
 - **Clipboard capture.** Copy a file link or video link in any app, and the Add dialog pops up.
 - **Video and stream downloads** through yt-dlp:
   - Quality presets: Best, MP4, 4K to 360p, MP3 or M4A audio.
@@ -18,12 +22,12 @@ Copy a link anywhere in Windows and VeloxDM offers to download it. It uses many 
   - FFmpeg merges HD video and audio.
 - **YouTube sign-in** (built-in WebView2 window) for age-restricted, private and members-only videos. Firefox cookies and `cookies.txt` files also work.
 - **Video Grabber** for `blob:` players and sites yt-dlp doesn't support: catches HLS, DASH and MP4 streams while the page plays.
-- **One-click tool install.** yt-dlp, FFmpeg and Deno come from their official GitHub releases into `%LOCALAPPDATA%\VeloxDM\tools`.
+- **One-click tool install.** yt-dlp, FFmpeg and Deno come from their official GitHub releases into `%LOCALAPPDATA%\BpstVideoDownloader\tools`.
 - **Queue.** Choose how many downloads run at once. Categories: Video, Music, Documents, Compressed, Programs, Images.
 - **Live segment map.** Shows each connection's progress for the selected download.
 - **Notification-area (tray) mode** with completion notifications.
 - **Drag and drop** links onto the window. Ctrl+V adds the link from the clipboard, Ctrl+N opens the Add dialog.
-- **Single instance.** `VeloxDM.exe <url>` hands the URL to the running app. This is the hook for browser integration.
+- **Single instance.** `BpstVideoDownloader.exe <url>` hands the URL to the running app. This is the hook for browser integration.
 - **Windows themes.** Light and dark follow Windows (WPF Fluent theme).
 
 ## About `blob:` URLs
@@ -32,9 +36,9 @@ A `blob:https://site/…` address is an in-memory object that exists only inside
 
 **Video Grabber** (toolbar, or the button that appears when you paste a `blob:` link):
 
-1. Open the video page in VeloxDM's built-in browser.
+1. Open the video page in BpstVideoDownloader's built-in browser.
 2. Press Play.
-3. VeloxDM lists the real streams it sees on the network. Click **Download**.
+3. BpstVideoDownloader lists the real streams it sees on the network. Click **Download**.
 
 The page's Referer, Origin, User-Agent and cookies are passed along, so CDNs that check them still work. Pop-up windows are blocked.
 
@@ -47,16 +51,16 @@ Requirements: Windows 10/11 and the [.NET 10 SDK](https://dotnet.microsoft.com/d
 ```powershell
 dotnet build
 dotnet test
-dotnet run --project src/VeloxDM.App
+dotnet run --project src/BpstVideoDownloader.App
 ```
 
 Self-contained single-file build (no .NET install needed on the target PC):
 
 ```powershell
-dotnet publish src/VeloxDM.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+dotnet publish src/BpstVideoDownloader.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
 ```
 
-Installer (`dist\VeloxDM-Setup-<version>.exe`, per-user, no admin rights needed). Requires [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`winget install JRSoftware.InnoSetup`):
+Installer (`dist\BpstVideoDownloader-Setup-<version>.exe`, per-user, no admin rights needed). Requires [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`winget install JRSoftware.InnoSetup`):
 
 ```powershell
 .\build-installer.ps1 -Version 0.1.0
@@ -64,22 +68,22 @@ Installer (`dist\VeloxDM-Setup-<version>.exe`, per-user, no admin rights needed)
 
 On GitHub, every push builds the installer as a workflow artifact. Pushing a tag such as `v0.1.0` also attaches the installer to a GitHub Release.
 
-> **Smart App Control:** with Smart App Control enforcing, Windows blocks unsigned binaries you build yourself. Locally built `VeloxDM.exe` and the test DLLs won't load. Use the CI build, a code-signed release, or a development machine/VM without Smart App Control.
+> **Smart App Control:** with Smart App Control enforcing, Windows blocks unsigned binaries you build yourself. Locally built `BpstVideoDownloader.exe` and the test DLLs won't load. Use the CI build, a code-signed release, or a development machine/VM without Smart App Control.
 
 ## Project layout
 
 | Path | Contents |
 |---|---|
-| `src/VeloxDM.Core` | UI-free engine: `SegmentedDownloader`, `HttpProbe`, `DownloadManager` (queue and persistence), `MediaDownloader` / `MediaTools` (yt-dlp), `UrlClassifier` |
-| `src/VeloxDM.App` | WPF app: main window, Add / Settings / Video tools dialogs, clipboard monitor, tray icon, single-instance pipe |
-| `tests/VeloxDM.Core.Tests` | xUnit tests against a local Kestrel server (parallel ranges, no-range fallback, pause/resume round-trip) |
+| `src/BpstVideoDownloader.Core` | UI-free engine: `SegmentedDownloader`, `HttpProbe`, `DownloadManager` (queue and persistence), `MediaDownloader` / `MediaTools` (yt-dlp), `UrlClassifier` |
+| `src/BpstVideoDownloader.App` | WPF app: main window, Add / Settings / Video tools dialogs, clipboard monitor, tray icon, single-instance pipe |
+| `tests/BpstVideoDownloader.Core.Tests` | xUnit tests against a local Kestrel server (parallel ranges, no-range fallback, pause/resume round-trip) |
 | `tools/make-icon.ps1` | Regenerates the app icon |
 
-Data lives in `%LOCALAPPDATA%\VeloxDM`: `downloads.json`, `settings.json` and `tools\`.
+Data lives in `%LOCALAPPDATA%\BpstVideoDownloader`: `downloads.json`, `settings.json` and `tools\`.
 
 ## Roadmap
 
-- Browser extension (Chrome/Edge/Firefox) that sends links and detected media streams to VeloxDM through native messaging.
+- Browser extension (Chrome/Edge/Firefox) that sends links and detected media streams to BpstVideoDownloader through native messaging.
 - Speed limiter and scheduler.
 - Batch / playlist downloads.
 - Per-site credentials and cookies.
@@ -87,7 +91,7 @@ Data lives in `%LOCALAPPDATA%\VeloxDM`: `downloads.json`, `settings.json` and `t
 
 ## Responsible use
 
-Only download content you have the right to download. Respect copyright and each website's terms of service. yt-dlp, FFmpeg and Deno are separate projects under their own licenses. VeloxDM downloads them on request and runs them as external programs.
+Only download content you have the right to download. Respect copyright and each website's terms of service. yt-dlp, FFmpeg and Deno are separate projects under their own licenses. BpstVideoDownloader downloads them on request and runs them as external programs.
 
 ## License
 

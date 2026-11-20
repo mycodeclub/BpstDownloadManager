@@ -3,9 +3,12 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <Version>0.1.0</Version>
-    <Product>VeloxDM</Product>
-    <Description>Open-source multi-connection download manager for Windows.</Description>
-    <Copyright>Copyright (c) VeloxDM contributors</Copyright>
+    <Product>BpstVideoDownloader</Product>
+    <Company>BitProSoftTech</Company>
+    <Authors>BitProSoftTech</Authors>
+    <Description>BpstVideoDownloader - free open-source download manager for Windows, a product of BitProSoftTech (bitprosofttech.com).</Description>
+    <Copyright>Copyright (c) 2026 BitProSoftTech and BpstVideoDownloader contributors</Copyright>
+    <PackageProjectUrl>https://bitprosofttech.com</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 </Project>
