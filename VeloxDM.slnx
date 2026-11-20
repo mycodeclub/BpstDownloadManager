@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VeloxDM.App/VeloxDM.App.csproj" />
+    <Project Path="src/VeloxDM.Core/VeloxDM.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/VeloxDM.Core.Tests/VeloxDM.Core.Tests.csproj" />
+  </Folder>
+</Solution>
