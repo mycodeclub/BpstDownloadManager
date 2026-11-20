@@ -282,6 +282,8 @@ public partial class MainWindow : Window
 
     private void Brand_Click(object sender, RoutedEventArgs e) => new AboutWindow { Owner = this }.ShowDialog();
 
+    private void BrandCard_MouseUp(object sender, MouseButtonEventArgs e) => Brand_Click(sender, e);
+
     private void Website_Navigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
     {
         AboutWindow.OpenWebsite();
@@ -362,18 +364,28 @@ public partial class MainWindow : Window
             return;
         }
         base.OnClosing(e);
-        if (!_exiting) ExitApp();
+        if (!e.Cancel) ShutdownApp();
     }
 
+    /// <summary>Tray "Exit": closes the window, which ends the app via <see cref="OnClosing"/>.</summary>
     private void ExitApp()
     {
         if (_exiting) return;
+        _exiting = true;
+        Close();
+    }
+
+    private bool _shutDown;
+
+    private void ShutdownApp()
+    {
+        if (_shutDown) return;
+        _shutDown = true;
         _exiting = true;
         _timer.Stop();
         _clipboard?.Dispose();
         _tray?.Dispose();
         _manager.Dispose();
-        Close();
         Application.Current.Shutdown();
     }
 }

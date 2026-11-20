@@ -66,6 +66,8 @@ public partial class GrabberWindow : Window
         _instance.Show();
     }
 
+    internal static GrabberWindow CreateForSelfTest(DownloadManager manager) => new(manager, null);
+
     /// <summary>"blob:https://site.com/uuid" → "https://site.com/" (the blob itself can't be opened).</summary>
     public static string? OriginOfBlob(string blobUrl)
     {

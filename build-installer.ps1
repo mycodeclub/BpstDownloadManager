@@ -9,6 +9,11 @@ dotnet publish src/BpstVideoDownloader.App -c Release -r win-x64 --self-containe
     -p:Version=$Version -o publish
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed" }
 
+# Refuse to package a build whose windows don't open.
+$selfTest = Start-Process publish\BpstVideoDownloader.exe -ArgumentList "--self-test" -PassThru -Wait
+if ($selfTest.ExitCode -ne 0) { throw "UI self-test failed - see %LOCALAPPDATA%\BpstVideoDownloader\logs" }
+Write-Host "UI self-test passed."
+
 $iscc = @(
     "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe",
     "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",

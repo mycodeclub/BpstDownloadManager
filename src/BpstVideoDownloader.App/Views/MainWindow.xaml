@@ -95,7 +95,7 @@
                     <Run Text="A product of" />
                     <Run Text="{x:Static core:Branding.Company}" FontWeight="SemiBold" />
                     <Run Text="  ·  " />
-                    <Hyperlink NavigateUri="{x:Static core:Branding.WebsiteUrl}" RequestNavigate="Website_Navigate"
+                    <Hyperlink NavigateUri="{x:Static core:Branding.WebsiteUri}" RequestNavigate="Website_Navigate"
                                ToolTip="Free download and updates">
                         <Run Text="{x:Static core:Branding.Website}" />
                     </Hyperlink>
@@ -117,7 +117,7 @@
             <DockPanel Margin="8,0,4,8">
                 <!-- Brand block at the bottom of the sidebar -->
                 <Border DockPanel.Dock="Bottom" Padding="10" CornerRadius="6" Background="#14808080" Margin="0,8,0,0"
-                        Cursor="Hand" MouseLeftButtonUp="Brand_Click" ToolTip="About BpstVideoDownloader">
+                        Cursor="Hand" MouseLeftButtonUp="BrandCard_MouseUp" ToolTip="About BpstVideoDownloader">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Image Source="pack://application:,,,/Assets/velox.ico" Width="20" Height="20" Margin="0,0,6,0" />
