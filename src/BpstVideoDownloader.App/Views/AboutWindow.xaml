@@ -33,7 +33,14 @@
             </StackPanel>
         </Border>
 
-        <TextBlock Margin="0,16,0,0" FontSize="11" Style="{StaticResource Muted}" TextWrapping="Wrap"
+        <TextBlock Margin="0,14,0,0">
+            <Run Text="Source code: " />
+            <Hyperlink NavigateUri="{x:Static core:Branding.SourceUri}" RequestNavigate="Link_Navigate">
+                <Run Text="github.com/mycodeclub/BpstDownloadManager" />
+            </Hyperlink>
+        </TextBlock>
+
+        <TextBlock Margin="0,10,0,0" FontSize="11" Style="{StaticResource Muted}" TextWrapping="Wrap"
                    Text="MIT License. Video support uses the separate open-source projects yt-dlp, FFmpeg and Deno, each under its own license." />
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">

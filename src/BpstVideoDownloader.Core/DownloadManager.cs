@@ -40,6 +40,9 @@ public sealed class DownloadManager : IDisposable
 
     private static readonly Lazy<string> LazyDataDir = new(() =>
     {
+        // Optional override, e.g. a portable install on a USB stick or a separate demo profile.
+        if (Environment.GetEnvironmentVariable("BPSTVD_DATA_DIR") is { Length: > 0 } custom) return custom;
+
         var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         var dir = Path.Combine(local, "BpstVideoDownloader");
         // The app was called VeloxDM before; carry its downloads list, settings, tools and sign-in over once.

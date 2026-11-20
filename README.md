@@ -1,10 +1,25 @@
-# BpstVideoDownloader
+<p align="center"><img src="docs/assets/icon-256.png" width="96" alt=""></p>
 
-**A free, open-source download manager for Windows, built with .NET 10 and WPF.**
+<h1 align="center">BpstVideoDownloader</h1>
 
-A product of **BitProSoftTech** · [bitprosofttech.com](https://bitprosofttech.com) · +(91)-82-9910-1616
+<p align="center"><strong>A free, open-source download manager for Windows, built with .NET 10 and WPF.</strong><br>
+A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.com">bitprosofttech.com</a> · +(91)-82-9910-1616</p>
 
-**Free download:** [bitprosofttech.com](https://bitprosofttech.com)
+<p align="center">
+  <a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-Setup.exe"><b>⬇ Download for Windows</b></a> ·
+  <a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-portable.exe">Portable .exe</a> ·
+  <a href="https://mycodeclub.github.io/BpstDownloadManager/">Project page</a> ·
+  <a href="https://github.com/mycodeclub/BpstDownloadManager/releases">All releases</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/mycodeclub/BpstDownloadManager/actions/workflows/build.yml"><img src="https://github.com/mycodeclub/BpstDownloadManager/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078d4.svg" alt="Windows 10 and 11">
+  <img src="https://img.shields.io/badge/.NET-10-512bd4.svg" alt=".NET 10">
+</p>
+
+![BpstVideoDownloader main window](docs/assets/screenshot-main.png)
 
 Copy a link anywhere in Windows and BpstVideoDownloader offers to download it. It uses many parallel connections and resumes after pauses, crashes or reboots. Video pages (YouTube and 1000+ other sites) and HLS/DASH streams go through [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 
@@ -44,11 +59,25 @@ The page's Referer, Origin, User-Agent and cookies are passed along, so CDNs tha
 
 DRM-protected (copy-protected) videos, such as those on Netflix, Prime Video or Disney+, can't be downloaded. The grabber tells you when a page uses DRM.
 
+## Install
+
+- **Installer:** [BpstVideoDownloader-Setup.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-Setup.exe). Per-user, no admin rights, Start menu shortcut and uninstaller. It can download the video tools during setup.
+- **Portable:** [BpstVideoDownloader-portable.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-portable.exe). A single file with .NET built in. Set the `BPSTVD_DATA_DIR` environment variable to keep its data in a folder of your choice.
+
+Release builds aren't code-signed yet, so Windows SmartScreen may show "Windows protected your PC". Click **More info → Run anyway**. Each release lists SHA-256 checksums in `SHA256SUMS.txt`.
+
+## Troubleshooting
+
+- Logs: `%LOCALAPPDATA%\BpstVideoDownloader\logs`. Attach the latest log when you [open an issue](https://github.com/mycodeclub/BpstDownloadManager/issues).
+- `BpstVideoDownloader.exe --self-test` opens every window and exits with code 0 if they all work.
+
 ## Build
 
 Requirements: Windows 10/11 and the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 ```powershell
+git clone https://github.com/mycodeclub/BpstDownloadManager.git
+cd BpstDownloadManager
 dotnet build
 dotnet test
 dotnet run --project src/BpstVideoDownloader.App
@@ -88,6 +117,10 @@ Data lives in `%LOCALAPPDATA%\BpstVideoDownloader`: `downloads.json`, `settings.
 - Batch / playlist downloads.
 - Per-site credentials and cookies.
 - Installer (MSIX/winget) with a signed binary.
+
+## Contributing
+
+Issues and pull requests are welcome. Please run `dotnet test` and `--self-test` before opening a pull request. The project website lives in [`docs/`](docs/index.html) and is published with GitHub Pages.
 
 ## Responsible use
 

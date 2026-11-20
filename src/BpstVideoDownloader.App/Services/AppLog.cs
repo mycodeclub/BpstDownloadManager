@@ -11,8 +11,7 @@ namespace BpstVideoDownloader.App.Services;
 public static class AppLog
 {
     private static readonly object Lock = new();
-    private static readonly string Dir = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BpstVideoDownloader", "logs");
+    private static readonly string Dir = Path.Combine(Core.DownloadManager.DefaultDataDir, "logs");
 
     public static string FilePath => Path.Combine(Dir, $"app-{DateTime.Now:yyyy-MM-dd}.log");
 
