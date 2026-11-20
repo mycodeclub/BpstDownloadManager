@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "BpstVideoDownloader": {
+      "commandName": "Project"
+    },
+    "BpstVideoDownloader (start in tray)": {
+      "commandName": "Project",
+      "commandLineArgs": "--tray"
+    }
+  }
+}
