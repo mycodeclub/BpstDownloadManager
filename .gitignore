@@ -481,6 +481,9 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
+# Old pre-rename solution that Visual Studio may re-create from an old session
+VeloxDM.slnx
+
 # BpstVideoDownloader build outputs
 publish/
 dist/

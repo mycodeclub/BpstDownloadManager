@@ -13,14 +13,14 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
 
       - name: Test
-        run: dotnet test -c Release
+        run: dotnet test BpstVideoDownloader.slnx -c Release
 
       - name: UI self-test (opens every window)
         shell: pwsh
