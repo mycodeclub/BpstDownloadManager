@@ -26,6 +26,7 @@ public class UrlTests
     [Theory]
     [InlineData("a<b>c?.mp4", "a_b_c_.mp4")]
     [InlineData("CON.txt", "_CON.txt")]
+    [InlineData("90S Retro | R-Fi Muzik | Songs.mp4", "90S Retro _ R-Fi Muzik _ Songs.mp4")]
     [InlineData("name. . ", "name")]
     public void Sanitizes_file_names(string input, string expected) => Assert.Equal(expected, FileNameHelper.Sanitize(input));
 

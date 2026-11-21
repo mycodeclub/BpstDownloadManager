@@ -171,6 +171,9 @@ public sealed class DownloadManager : IDisposable
     public event Action<DownloadJob>? JobRemoved;
     public event Action<DownloadJob>? JobFinished;
 
+    /// <summary>A download failed or is being retried (full exception, for the app log / support).</summary>
+    public event Action<DownloadJob, Exception>? JobProblem;
+
     /// <summary>True while any download runs; platforms use it to keep the device awake / show a service.</summary>
     public event Action<bool>? BusyChanged;
 
@@ -467,6 +470,7 @@ public sealed class DownloadManager : IDisposable
         catch (Exception ex) when (SegmentedDownloader.IsTransientError(ex) && job.AutoRetries < Settings.AutoRetryCount)
         {
             // Long downloads: network dropped, Wi-Fi changed, PC slept... wait and try again automatically.
+            JobProblem?.Invoke(job, ex);
             job.AutoRetries++;
             job.Error = $"{ex.Message} Retrying ({job.AutoRetries} of {Settings.AutoRetryCount})...";
             job.Status = DownloadStatus.Paused;
@@ -478,6 +482,7 @@ public sealed class DownloadManager : IDisposable
         }
         catch (Exception ex)
         {
+            JobProblem?.Invoke(job, ex);
             job.Status = DownloadStatus.Failed;
             job.Error = ex.Message;
             job.NeedsSignIn = ex is MediaSignInRequiredException;

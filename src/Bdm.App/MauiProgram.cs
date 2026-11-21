@@ -31,6 +31,7 @@ public static class MauiProgram
         manager.PlatformMuxer = new Droid.AndroidStreamMuxer(); // YouTube HD on phones: merge video + audio with MediaMuxer
 #endif
         AppLog.Info($"Loaded {manager.Jobs.Count} download(s) from {platform.DataDirectory}");
+        manager.JobProblem += (job, ex) => AppLog.Error($"Download problem ({job.Kind}, {job.Status}, retry {job.AutoRetries}) {job.Url}", ex);
 
         builder.Services.AddSingleton<IPlatformServices>(platform);
         builder.Services.AddSingleton(manager);

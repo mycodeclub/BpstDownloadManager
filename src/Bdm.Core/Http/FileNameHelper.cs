@@ -43,10 +43,13 @@ public static class FileNameHelper
         return string.IsNullOrWhiteSpace(last) ? "download" : Sanitize(last);
     }
 
+    // Same rules on every platform: Windows-invalid characters are also rejected by Android's shared
+    // storage (Download folder), even though plain Linux would accept them.
+    private static readonly char[] Invalid = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'];
+
     public static string Sanitize(string name)
     {
-        var invalid = Path.GetInvalidFileNameChars();
-        var chars = name.Select(c => invalid.Contains(c) || char.IsControl(c) ? '_' : c).ToArray();
+        var chars = name.Select(c => Invalid.Contains(c) || char.IsControl(c) ? '_' : c).ToArray();
         var clean = new string(chars).Trim().TrimEnd('.', ' ');
         if (clean.Length == 0) clean = "download";
 

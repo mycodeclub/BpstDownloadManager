@@ -26,6 +26,10 @@ public static class AppLog
 
     private static void Write(string level, string message)
     {
+#if ANDROID
+        // Also to logcat ("adb logcat -s BDM"), since app files aren't readable on release builds.
+        if (level == "ERROR") Android.Util.Log.Error("BDM", message); else Android.Util.Log.Info("BDM", message);
+#endif
         try
         {
             lock (Lock)
