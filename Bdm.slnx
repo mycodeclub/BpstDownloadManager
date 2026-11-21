@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Bdm.Core/Bdm.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Bdm.Core.Tests/Bdm.Core.Tests.csproj" />
+  </Folder>
+</Solution>

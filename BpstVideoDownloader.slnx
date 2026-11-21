@@ -1,9 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/BpstVideoDownloader.App/BpstVideoDownloader.App.csproj" />
-    <Project Path="src/BpstVideoDownloader.Core/BpstVideoDownloader.Core.csproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/BpstVideoDownloader.Core.Tests/BpstVideoDownloader.Core.Tests.csproj" />
-  </Folder>
-</Solution>
