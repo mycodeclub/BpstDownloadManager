@@ -46,7 +46,8 @@ public sealed class AppSettings
     public bool ShowCompletionNotification { get; set; } = true;
 
     // ---- video
-    public string DefaultMediaQuality { get; set; } = MediaQuality.Best;
+    /// <summary>MP4 by default: plays on every PC, phone and TV (best quality may be WebM/VP9).</summary>
+    public string DefaultMediaQuality { get; set; } = "mp4";
 
     /// <summary>Use IPv4 for video sites (avoids stalls on networks with broken IPv6).</summary>
     public bool ForceIPv4ForVideo { get; set; } = true;

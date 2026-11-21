@@ -487,3 +487,5 @@ VeloxDM.slnx
 # BpstVideoDownloader build outputs
 publish/
 dist/
+
+BpstVideoDownloader.slnx

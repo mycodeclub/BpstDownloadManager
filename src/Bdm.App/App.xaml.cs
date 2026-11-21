@@ -47,6 +47,20 @@ public partial class App : Application
                 if (route == "add") await AppNavigation.OpenAddAsync("https://www.youtube.com/watch?v=eRsGyueVLvQ");
                 else await Shell.Current.GoToAsync("//" + route);
             }
+            // "BDM.exe --download=<link>": start downloading right away (scripts, browser hand-off).
+            if (StartupArgs.FirstOrDefault(a => a.StartsWith("--download=", StringComparison.Ordinal)) is { } dl)
+            {
+                var url = dl["--download=".Length..].Trim('"');
+                var kind = UrlClassifier.Classify(url) switch
+                {
+                    UrlKind.Media => DownloadKind.Media,
+                    UrlKind.Hls => DownloadKind.Hls,
+                    UrlKind.Torrent => DownloadKind.Torrent,
+                    _ => DownloadKind.Http,
+                };
+                _manager.Add(new DownloadJob { Url = url, Kind = kind, MediaQuality = _manager.Settings.DefaultMediaQuality }, startNow: true);
+                AppLog.Info($"Started from command line: {kind} {url}");
+            }
             await _platform.RequestPermissionsAsync();
             if (PendingIncoming is { } pending)
             {
