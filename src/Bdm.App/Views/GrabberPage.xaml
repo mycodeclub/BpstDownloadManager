@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Bdm.App.Views"
+             x:Class="Bdm.App.Views.GrabberPage"
+             Title="Video Grabber"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageLight}, Dark={StaticResource PageDark}}">
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6" Padding="10,8">
+            <Button Text="←" Clicked="Back_Clicked" Style="{StaticResource SmallButton}" />
+            <Entry x:Name="AddressEntry" Grid.Column="1" Placeholder="Video page address" Keyboard="Url" ReturnType="Go" Completed="Go_Clicked" />
+            <Button Grid.Column="2" Text="Go" Clicked="Go_Clicked" Style="{StaticResource PrimaryButton}" />
+        </Grid>
+
+        <WebView x:Name="Web" Grid.Row="1" Navigated="Web_Navigated" />
+
+        <Border Grid.Row="2" Padding="12,10" StrokeThickness="0"
+                BackgroundColor="{AppThemeBinding Light={StaticResource CardLight}, Dark={StaticResource CardDark}}">
+            <VerticalStackLayout Spacing="6">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label x:Name="HintLabel" FontAttributes="Bold" LineBreakMode="WordWrap" VerticalOptions="Center"
+                           Text="Open the video page and press Play. The real streams behind the player appear here." />
+                    <Button Grid.Column="1" Text="Clear" Clicked="Clear_Clicked" Style="{StaticResource SmallButton}" />
+                </Grid>
+                <Border x:Name="DrmBanner" Style="{StaticResource Banner}" BackgroundColor="#22DC2626" IsVisible="False">
+                    <Label Text="This page uses DRM (copy protection). Protected videos can't be downloaded; unprotected streams listed below still work." LineBreakMode="WordWrap" />
+                </Border>
+                <CollectionView x:Name="StreamList" MaximumHeightRequest="{OnIdiom Phone=200, Default=170}" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="local:DetectedItem">
+                            <Grid ColumnDefinitions="Auto,Auto,Auto,*" ColumnSpacing="8" Padding="0,3">
+                                <Button Text="Download" Clicked="Download_Clicked" CommandParameter="{Binding .}" Style="{StaticResource SmallButton}" />
+                                <Label Grid.Column="1" Text="{Binding Type}" FontAttributes="Bold" VerticalOptions="Center" FontSize="13" />
+                                <Label Grid.Column="2" Text="{Binding Size}" VerticalOptions="Center" Style="{StaticResource Muted}" FontSize="12" />
+                                <Label Grid.Column="3" Text="{Binding Url}" VerticalOptions="Center" LineBreakMode="MiddleTruncation" Style="{StaticResource Muted}" FontSize="12" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Label x:Name="StatusLabel" Style="{StaticResource Muted}" FontSize="12" />
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell x:Class="Bdm.App.AppShell"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:Bdm.App.Views"
+       Title="BDM"
+       FlyoutBehavior="{OnIdiom Desktop=Locked, Default=Flyout}"
+       FlyoutWidth="220"
+       FlyoutBackgroundColor="{AppThemeBinding Light=#EEF2F8, Dark=#0E172A}">
+
+    <Shell.FlyoutHeader>
+        <VerticalStackLayout Padding="18,20,18,12" Spacing="2">
+            <Label Text="BDM" FontSize="26" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+            <Label Text="BPST Download Manager" FontSize="13" FontAttributes="Bold" />
+            <Label Text="by BitProSoftTech" FontSize="12" Style="{StaticResource Muted}" />
+        </VerticalStackLayout>
+    </Shell.FlyoutHeader>
+
+    <FlyoutItem Title="⬇  Downloads" Route="downloads">
+        <ShellContent ContentTemplate="{DataTemplate views:DownloadsPage}" />
+    </FlyoutItem>
+    <FlyoutItem Title="🔍  Video Grabber" Route="grabber">
+        <ShellContent ContentTemplate="{DataTemplate views:GrabberPage}" />
+    </FlyoutItem>
+    <FlyoutItem Title="⚙  Settings" Route="settings">
+        <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </FlyoutItem>
+    <FlyoutItem Title="ℹ  About" Route="about">
+        <ShellContent ContentTemplate="{DataTemplate views:AboutPage}" />
+    </FlyoutItem>
+
+    <Shell.FlyoutFooter>
+        <VerticalStackLayout Padding="18,12" Spacing="2">
+            <Label Text="bitprosofttech.com" FontSize="12" Style="{StaticResource Muted}" />
+            <Label Text="+(91)-82-9910-1616" FontSize="12" Style="{StaticResource Muted}" />
+        </VerticalStackLayout>
+    </Shell.FlyoutFooter>
+</Shell>

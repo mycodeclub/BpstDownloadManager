@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:core="clr-namespace:Bdm.Core;assembly=Bdm.Core"
+             x:Class="Bdm.App.Views.AboutPage"
+             Title="About"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageLight}, Dark={StaticResource PageDark}}">
+    <ScrollView>
+        <VerticalStackLayout Padding="{OnIdiom Phone=16, Default=24}" Spacing="14" MaximumWidthRequest="680">
+            <HorizontalStackLayout Spacing="14">
+                <Border WidthRequest="64" HeightRequest="64" StrokeThickness="0" BackgroundColor="{StaticResource Primary}">
+                    <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                    <Label Text="⬇" FontSize="34" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+                <VerticalStackLayout VerticalOptions="Center">
+                    <Label Text="{x:Static core:Branding.Product}" FontSize="24" FontAttributes="Bold" />
+                    <Label x:Name="VersionLabel" Style="{StaticResource Muted}" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+
+            <Label LineBreakMode="WordWrap"
+                   Text="Free, open-source download manager for Windows and Android: multi-connection downloads with resume, torrents, YouTube and streaming video (including blob: players), and Focus mode to give one download all your bandwidth." />
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="A product of" Style="{StaticResource Muted}" />
+                    <Label Text="{x:Static core:Branding.Company}" FontSize="20" FontAttributes="Bold" />
+                    <Label>
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Website: " />
+                                <Span Text="{x:Static core:Branding.Website}" TextColor="{StaticResource Primary}" TextDecorations="Underline">
+                                    <Span.GestureRecognizers><TapGestureRecognizer Tapped="Website_Tapped" /></Span.GestureRecognizers>
+                                </Span>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label>
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Phone: " />
+                                <Span Text="{x:Static core:Branding.Phone}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label Text="Free download and updates on our website." Style="{StaticResource Muted}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <FlexLayout Wrap="Wrap">
+                <Button Text="Visit website" Clicked="Website_Tapped" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" />
+                <Button Text="Source code" Clicked="Source_Clicked" Style="{StaticResource QuietButton}" Margin="0,0,8,8" />
+                <Button Text="Project page" Clicked="Project_Clicked" Style="{StaticResource QuietButton}" Margin="0,0,8,8" />
+            </FlexLayout>
+
+            <Label Style="{StaticResource Muted}" FontSize="12" LineBreakMode="WordWrap"
+                   Text="MIT License. Uses MonoTorrent (MIT), YoutubeExplode (LGPL-3.0) and, on Windows, the separate programs yt-dlp, FFmpeg and Deno under their own licenses. Only download content you have the right to download." />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

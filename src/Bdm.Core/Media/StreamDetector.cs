@@ -56,6 +56,22 @@ public static class StreamDetector
         return null;
     }
 
+    /// <summary>
+    /// For browsers that only expose the request (Android WebView): decide from the address alone.
+    /// Playlists are certain; video files are accepted by extension (thumbnails/segments filtered out).
+    /// </summary>
+    public static DetectedStream? ClassifyByUrl(string url)
+    {
+        var byType = Classify(url, null, null);
+        if (byType is not null) return byType;
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || (uri.Scheme != "http" && uri.Scheme != "https")) return null;
+        var path = uri.AbsolutePath.ToLowerInvariant();
+        if (SegmentExtensions.Any(path.EndsWith) || path.Contains("segment") || path.Contains("thumb") || path.Contains("preview")) return null;
+        return path.EndsWith(".mp4") || path.EndsWith(".webm") || path.EndsWith(".mkv") || path.EndsWith(".m4v") || path.EndsWith(".mov")
+            ? new DetectedStream(DetectedStreamKind.File, url, null, null)
+            : null;
+    }
+
     /// <summary>Parses the total from "bytes 0-1023/52428800".</summary>
     public static long? TotalFromContentRange(string? contentRange)
     {

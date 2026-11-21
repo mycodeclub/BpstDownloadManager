@@ -1,5 +1,6 @@
-<Solution>
+﻿<Solution>
   <Folder Name="/src/">
+    <Project Path="src/Bdm.App/Bdm.App.csproj" />
     <Project Path="src/Bdm.Core/Bdm.Core.csproj" />
   </Folder>
   <Folder Name="/tests/">

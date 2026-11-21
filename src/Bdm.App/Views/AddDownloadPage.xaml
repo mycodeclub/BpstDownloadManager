@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Bdm.App.Views"
+             x:Class="Bdm.App.Views.AddDownloadPage"
+             Title="Add download"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageLight}, Dark={StaticResource PageDark}}">
+    <ScrollView>
+        <VerticalStackLayout Padding="{OnIdiom Phone=16, Default=24}" Spacing="12" MaximumWidthRequest="760">
+
+            <Label Text="Address" FontAttributes="Bold" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <Entry x:Name="UrlEntry" Placeholder="https://…  ·  magnet:?…  ·  YouTube link" TextChanged="Url_TextChanged" />
+                <Button Grid.Column="1" Text="Paste" Clicked="Paste_Clicked" Style="{StaticResource QuietButton}" />
+            </Grid>
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="6">
+                    <HorizontalStackLayout Spacing="8">
+                        <Border x:Name="KindBadge" Style="{StaticResource Badge}">
+                            <Label x:Name="KindLabel" FontSize="11" FontAttributes="Bold" TextColor="White" />
+                        </Border>
+                        <Label x:Name="InfoLabel" FontAttributes="Bold" LineBreakMode="WordWrap" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label x:Name="DetailLabel" Style="{StaticResource Muted}" LineBreakMode="WordWrap" />
+                    <ActivityIndicator x:Name="Busy" IsRunning="False" IsVisible="False" HeightRequest="24" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border x:Name="SignInPanel" Style="{StaticResource Banner}" BackgroundColor="#222563EB" IsVisible="False">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <Label Text="This video needs a signed-in YouTube account. Sign in once inside BDM; the session stays on this device." LineBreakMode="WordWrap" VerticalOptions="Center" />
+                    <Button Grid.Column="1" Text="Sign in to YouTube" Clicked="SignIn_Clicked" Style="{StaticResource PrimaryButton}" />
+                </Grid>
+            </Border>
+
+            <Border x:Name="GrabberPanel" Style="{StaticResource Banner}" BackgroundColor="#2214B8A6" IsVisible="False">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <Label x:Name="GrabberText" LineBreakMode="WordWrap" VerticalOptions="Center" />
+                    <Button Grid.Column="1" Text="Open in Video Grabber" Clicked="Grabber_Clicked" Style="{StaticResource PrimaryButton}" />
+                </Grid>
+            </Border>
+
+            <Border x:Name="ToolsPanel" Style="{StaticResource Banner}" BackgroundColor="#22F59E0B" IsVisible="False">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <Label x:Name="ToolsText" LineBreakMode="WordWrap" VerticalOptions="Center" />
+                    <Button Grid.Column="1" Text="Video tools" Clicked="Tools_Clicked" Style="{StaticResource QuietButton}" />
+                </Grid>
+            </Border>
+
+            <Label x:Name="NameTitle" Text="File name" FontAttributes="Bold" />
+            <Entry x:Name="NameEntry" TextChanged="Name_TextChanged" />
+
+            <Label Text="Save to" FontAttributes="Bold" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <Entry x:Name="FolderEntry" />
+                <Button x:Name="FolderButton" Grid.Column="1" Text="Change…" Clicked="Folder_Clicked" Style="{StaticResource QuietButton}" />
+            </Grid>
+
+            <VerticalStackLayout x:Name="QualityGroup" Spacing="6" IsVisible="False">
+                <Label Text="Quality" FontAttributes="Bold" />
+                <Picker x:Name="QualityPicker" ItemDisplayBinding="{Binding Label}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout x:Name="TorrentGroup" Spacing="6" IsVisible="False">
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+                    <Label x:Name="TorrentFilesTitle" Text="Files in this torrent" FontAttributes="Bold" VerticalOptions="Center" />
+                    <Button Grid.Column="1" Text="All" Clicked="TorrentAll_Clicked" Style="{StaticResource SmallButton}" />
+                    <Button Grid.Column="2" Text="None" Clicked="TorrentNone_Clicked" Style="{StaticResource SmallButton}" />
+                </Grid>
+                <CollectionView x:Name="TorrentFilesList" MaximumHeightRequest="260" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="local:TorrentFileChoice">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" Padding="0,2">
+                                <CheckBox IsChecked="{Binding Selected}" CheckedChanged="TorrentCheck_Changed" />
+                                <Label Grid.Column="1" Text="{Binding Path}" VerticalOptions="Center" LineBreakMode="MiddleTruncation" FontSize="13" />
+                                <Label Grid.Column="2" Text="{Binding SizeText}" VerticalOptions="Center" Style="{StaticResource Muted}" FontSize="12" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+            <FlexLayout Wrap="Wrap" JustifyContent="End" Margin="0,8,0,0">
+                <Button x:Name="StartButton" Text="Download now" Clicked="Start_Clicked" Style="{StaticResource PrimaryButton}" Margin="4" />
+                <Button x:Name="LaterButton" Text="Download later" Clicked="Later_Clicked" Style="{StaticResource QuietButton}" Margin="4" />
+                <Button Text="Cancel" Clicked="Cancel_Clicked" Style="{StaticResource QuietButton}" Margin="4" />
+            </FlexLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

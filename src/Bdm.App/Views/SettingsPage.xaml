@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bdm.App.Views.SettingsPage"
+             Title="Settings"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageLight}, Dark={StaticResource PageDark}}">
+    <ScrollView>
+        <VerticalStackLayout Padding="{OnIdiom Phone=16, Default=24}" Spacing="14" MaximumWidthRequest="760">
+
+            <!-- Downloads -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Downloads" Style="{StaticResource SectionTitle}" />
+                    <Label Text="Save files to" FontAttributes="Bold" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Entry x:Name="FolderEntry" />
+                        <Button x:Name="FolderButton" Grid.Column="1" Text="Change…" Clicked="Folder_Clicked" Style="{StaticResource QuietButton}" />
+                    </Grid>
+                    <Label x:Name="ConnLabel" FontAttributes="Bold" />
+                    <Slider x:Name="ConnSlider" Minimum="1" Maximum="32" ValueChanged="Slider_Changed" />
+                    <Label x:Name="ConcLabel" FontAttributes="Bold" />
+                    <Slider x:Name="ConcSlider" Minimum="1" Maximum="10" ValueChanged="Slider_Changed" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Overall speed limit (KB/s, 0 = no limit)" VerticalOptions="Center" />
+                        <Entry x:Name="GlobalLimitEntry" Grid.Column="1" Keyboard="Numeric" WidthRequest="110" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="With ⚡ Focus on, slow other downloads to (KB/s, 0 = pause them)" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                        <Entry x:Name="FocusEntry" Grid.Column="1" Keyboard="Numeric" WidthRequest="110" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Retry automatically after network drops (times)" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                        <Entry x:Name="RetryEntry" Grid.Column="1" Keyboard="Numeric" WidthRequest="110" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Keep the device awake while downloading" VerticalOptions="Center" />
+                        <Switch x:Name="KeepAwakeSwitch" Grid.Column="1" />
+                    </Grid>
+                    <Grid x:Name="ClipboardRow" ColumnDefinitions="*,Auto">
+                        <Label Text="Watch the clipboard for links" VerticalOptions="Center" />
+                        <Switch x:Name="ClipboardSwitch" Grid.Column="1" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Notify when a download finishes" VerticalOptions="Center" />
+                        <Switch x:Name="NotifySwitch" Grid.Column="1" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Torrent -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Torrents" Style="{StaticResource SectionTitle}" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Listening port" VerticalOptions="Center" />
+                        <Entry x:Name="PortEntry" Grid.Column="1" Keyboard="Numeric" WidthRequest="110" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Keep sharing until ratio (0 = stop when done)" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                        <Entry x:Name="RatioEntry" Grid.Column="1" Keyboard="Numeric" WidthRequest="110" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Upload limit (KB/s, 0 = no limit)" VerticalOptions="Center" />
+                        <Entry x:Name="UploadEntry" Grid.Column="1" Keyboard="Numeric" WidthRequest="110" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Find peers with DHT" VerticalOptions="Center" />
+                        <Switch x:Name="DhtSwitch" Grid.Column="1" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Open the port on my router automatically (UPnP)" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                        <Switch x:Name="UpnpSwitch" Grid.Column="1" />
+                    </Grid>
+                    <Label Text="Torrent changes apply after restarting BDM." Style="{StaticResource Muted}" FontSize="12" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Video -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Video" Style="{StaticResource SectionTitle}" />
+                    <Label Text="Default quality" FontAttributes="Bold" />
+                    <Picker x:Name="QualityPicker" ItemDisplayBinding="{Binding Label}" />
+                    <Label Text="YouTube sign-in (age-restricted, private, members-only videos)" FontAttributes="Bold" />
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                        <Label x:Name="SignInStatus" VerticalOptions="Center" />
+                        <Button Grid.Column="1" Text="Sign in…" Clicked="SignIn_Clicked" Style="{StaticResource QuietButton}" />
+                        <Button x:Name="SignOutButton" Grid.Column="2" Text="Sign out" Clicked="SignOut_Clicked" Style="{StaticResource QuietButton}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Video tools (Windows) -->
+            <Border x:Name="ToolsCard" Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Video tools (Windows)" Style="{StaticResource SectionTitle}" />
+                    <Label Text="yt-dlp adds 1000+ video sites, FFmpeg merges HD video with audio, Deno runs YouTube's JavaScript. Free, open source, downloaded from their official GitHub releases."
+                           Style="{StaticResource Muted}" LineBreakMode="WordWrap" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Label x:Name="YtDlpStatus" VerticalOptions="Center" LineBreakMode="MiddleTruncation" />
+                        <Button x:Name="YtDlpButton" Grid.Column="1" Clicked="YtDlp_Clicked" Style="{StaticResource QuietButton}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Label x:Name="FfmpegStatus" VerticalOptions="Center" LineBreakMode="MiddleTruncation" />
+                        <Button x:Name="FfmpegButton" Grid.Column="1" Clicked="Ffmpeg_Clicked" Style="{StaticResource QuietButton}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Label x:Name="DenoStatus" VerticalOptions="Center" LineBreakMode="MiddleTruncation" />
+                        <Button x:Name="DenoButton" Grid.Column="1" Clicked="Deno_Clicked" Style="{StaticResource QuietButton}" />
+                    </Grid>
+                    <Label x:Name="ToolsProgress" Style="{StaticResource Muted}" LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Save settings" Clicked="Save_Clicked" Style="{StaticResource PrimaryButton}" HorizontalOptions="End" />
+            <Label x:Name="SavedLabel" HorizontalOptions="End" Style="{StaticResource Muted}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
