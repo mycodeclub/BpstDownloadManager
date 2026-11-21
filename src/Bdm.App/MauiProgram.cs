@@ -27,6 +27,9 @@ public static class MauiProgram
         TaskScheduler.UnobservedTaskException += (_, e) => { AppLog.Error("Unobserved task exception", e.Exception); e.SetObserved(); };
 
         var manager = new DownloadManager(platform.DataDirectory, platform.DefaultDownloadFolder);
+#if ANDROID
+        manager.PlatformMuxer = new Droid.AndroidStreamMuxer(); // YouTube HD on phones: merge video + audio with MediaMuxer
+#endif
         AppLog.Info($"Loaded {manager.Jobs.Count} download(s) from {platform.DataDirectory}");
 
         builder.Services.AddSingleton<IPlatformServices>(platform);

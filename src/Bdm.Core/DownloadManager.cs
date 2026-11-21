@@ -37,7 +37,9 @@ public sealed class DownloadManager : IDisposable
         Http = HttpFactory.CreateClient();
         Tools = new MediaTools(Path.Combine(dataDir, "tools"));
         YtDlp = new MediaDownloader(Tools);
-        YouTube = new YoutubeExplodeBackend(Http, () => Settings.CookiesFile);
+        Ffmpeg = new FfmpegMuxer(() => Tools.FfmpegPath);
+        YouTube = new YoutubeExplodeBackend(Http, () => Settings.CookiesFile,
+            () => PlatformMuxer is { IsAvailable: true } pm ? pm : Ffmpeg.IsAvailable ? Ffmpeg : null);
         Torrents = new TorrentService(dataDir, Settings);
         GlobalLimiter.BytesPerSecond = Settings.GlobalSpeedLimitKBps * 1024L;
         ApplyMediaSettings();
@@ -120,6 +122,42 @@ public sealed class DownloadManager : IDisposable
     public MediaDownloader YtDlp { get; }
     public YoutubeExplodeBackend YouTube { get; }
     public TorrentService Torrents { get; }
+    public FfmpegMuxer Ffmpeg { get; }
+
+    /// <summary>Set by the app on platforms with a built-in muxer (Android MediaMuxer).</summary>
+    public IStreamMuxer? PlatformMuxer { get; set; }
+
+    private readonly SemaphoreSlim _toolsGate = new(1, 1);
+
+    /// <summary>
+    /// Desktop: the first video download installs yt-dlp + FFmpeg (and Deno if no Node.js) automatically,
+    /// so YouTube works out of the box. Returns false if that isn't possible (then the built-in downloader is used).
+    /// </summary>
+    private async Task<bool> EnsureVideoToolsAsync(DownloadJob job, CancellationToken ct)
+    {
+        if (!Tools.IsSupported || !Settings.AutoInstallVideoTools) return YtDlp.IsAvailable;
+        if (YtDlp.IsAvailable && Tools.FfmpegPath is not null) return true;
+        await _toolsGate.WaitAsync(ct);
+        try
+        {
+            var progress = new Progress<string>(s => job.Stage = "One-time setup: " + s);
+            if (Tools.YtDlpPath is null) await Tools.InstallYtDlpAsync(Http, progress, ct);
+            if (Tools.FfmpegPath is null) await Tools.InstallFfmpegAsync(Http, progress, ct);
+            if (Tools.JsRuntimePath is null) await Tools.InstallDenoAsync(Http, progress, ct);
+            job.Stage = null;
+            return YtDlp.IsAvailable;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException || !ct.IsCancellationRequested)
+        {
+            job.Stage = null;
+            job.Detail = "Video tools couldn't be installed (" + ex.Message + "); using the built-in downloader.";
+            return YtDlp.IsAvailable;
+        }
+        finally
+        {
+            _toolsGate.Release();
+        }
+    }
 
     /// <summary>Overall speed limit shared by all downloads.</summary>
     public RateLimiter GlobalLimiter { get; } = new();
@@ -191,6 +229,7 @@ public sealed class DownloadManager : IDisposable
         {
             job.Segments.Clear();
             job.HlsDone = null;
+            job.Parts = null;
         }
         job.TotalBytes = null;
         job.MediaDownloaded = 0;
@@ -239,6 +278,10 @@ public sealed class DownloadManager : IDisposable
                 break;
             case DownloadKind.Hls:
                 TryDeleteDir(job.FullPath + ".bdmparts");
+                TryDelete(job.TempPath);
+                break;
+            case DownloadKind.Media when job.Parts is { } parts:
+                foreach (var p in parts) { TryDelete(p.TempPath); TryDelete(p.FullPath); }
                 TryDelete(job.TempPath);
                 break;
             default:
@@ -391,6 +434,7 @@ public sealed class DownloadManager : IDisposable
             switch (job.Kind)
             {
                 case DownloadKind.Media:
+                    if (Tools.IsSupported && !YtDlp.IsAvailable) await EnsureVideoToolsAsync(job, ct);
                     await MediaFor(job.Url).DownloadAsync(job, connections, LimitersFor(job), ct);
                     break;
                 case DownloadKind.Hls:

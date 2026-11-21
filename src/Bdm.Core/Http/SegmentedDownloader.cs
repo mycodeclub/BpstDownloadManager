@@ -36,13 +36,34 @@ public sealed class SegmentedDownloader
 
     private string Url(DownloadJob job) => UrlOverride ?? job.Url;
 
+    /// <summary>
+    /// Size known in advance (e.g. from YouTube's stream info): skips the size probe and assumes byte ranges work.
+    /// </summary>
+    public long? KnownSize { get; init; }
+
+    /// <summary>
+    /// YouTube-style ranges: request "&amp;range=start-end" in the URL instead of a Range header, at most
+    /// <see cref="MaxRequestBytes"/> per request. YouTube's video servers throttle plain Range requests.
+    /// </summary>
+    public bool RangeInQuery { get; init; }
+
+    /// <summary>Largest single request (0 = whole segment). Used with <see cref="RangeInQuery"/>.</summary>
+    public long MaxRequestBytes { get; init; }
+
     public async Task DownloadAsync(DownloadJob job, CancellationToken ct)
     {
         Directory.CreateDirectory(job.Folder);
         job.Status = DownloadStatus.Connecting;
 
         bool resumable = job.Segments.Count > 0 && job.TotalBytes is not null && File.Exists(job.TempPath);
-        if (!resumable)
+        if (!resumable && KnownSize is long known and > 0)
+        {
+            job.TotalBytes = known;
+            job.SupportsRanges = true;
+            TryDelete(job.TempPath);
+            lock (job.Sync) job.Segments = CreateInitialSegments(job);
+        }
+        else if (!resumable)
         {
             var probe = await HttpProbe.ProbeAsync(_http, Url(job), job.Referrer, ct, job.Headers);
             job.TotalBytes = probe.TotalBytes;
@@ -182,8 +203,14 @@ public sealed class SegmentedDownloader
         {
             try
             {
-                await DownloadSegmentOnceAsync(job, seg, handle, buffer, ct);
-                return;
+                // With a per-request size cap, one segment takes several requests.
+                while (true)
+                {
+                    await DownloadSegmentOnceAsync(job, seg, handle, buffer, ct);
+                    lock (job.Sync)
+                        if (seg.IsDone) return;
+                    attempt = 0;
+                }
             }
             catch (OperationCanceledException) when (ct.IsCancellationRequested)
             {
@@ -211,12 +238,20 @@ public sealed class SegmentedDownloader
             end = seg.End;
         }
 
-        using var req = HttpFactory.CreateRequest(Url(job), job.Referrer, job.Headers);
-        req.Headers.Range = new RangeHeaderValue(pos, end);
-        // If-Range: the server only sends the part if the file is unchanged; otherwise it sends the whole
-        // (new) file with 200, which we detect below instead of mixing two versions of the file.
-        if (job.ETag is { } etag) req.Headers.IfRange = new RangeConditionHeaderValue(new EntityTagHeaderValue(etag));
-        else if (job.LastModified is { } lm) req.Headers.IfRange = new RangeConditionHeaderValue(lm);
+        // Cap a single request (YouTube) - the rest of the segment is fetched by the next request.
+        long reqEnd = MaxRequestBytes > 0 ? Math.Min(end, pos + MaxRequestBytes - 1) : end;
+        var url = Url(job);
+        if (RangeInQuery) url += (url.Contains('?') ? "&" : "?") + $"range={pos}-{reqEnd}";
+
+        using var req = HttpFactory.CreateRequest(url, job.Referrer, job.Headers);
+        if (!RangeInQuery)
+        {
+            req.Headers.Range = new RangeHeaderValue(pos, reqEnd);
+            // If-Range: the server only sends the part if the file is unchanged; otherwise it sends the whole
+            // (new) file with 200, which we detect below instead of mixing two versions of the file.
+            if (job.ETag is { } etag) req.Headers.IfRange = new RangeConditionHeaderValue(new EntityTagHeaderValue(etag));
+            else if (job.LastModified is { } lm) req.Headers.IfRange = new RangeConditionHeaderValue(lm);
+        }
 
         using var stall = CancellationTokenSource.CreateLinkedTokenSource(ct);
         stall.CancelAfter(StallTimeout);
@@ -224,7 +259,7 @@ public sealed class SegmentedDownloader
 
         if (!resp.IsSuccessStatusCode)
             throw new HttpRequestException($"HTTP {(int)resp.StatusCode} {resp.ReasonPhrase}", null, resp.StatusCode);
-        if (resp.StatusCode != HttpStatusCode.PartialContent)
+        if (!RangeInQuery && resp.StatusCode != HttpStatusCode.PartialContent)
         {
             if (req.Headers.IfRange is not null)
                 throw new RemoteFileChangedException("The file on the server changed since this download started.");
@@ -241,8 +276,8 @@ public sealed class SegmentedDownloader
             if (n == 0)
             {
                 lock (job.Sync)
-                    if (!seg.IsDone) throw new IOException("Connection closed before the segment completed.");
-                return;
+                    if (!seg.IsDone && seg.Position <= reqEnd) throw new IOException("Connection closed before the segment completed.");
+                return; // segment done, or this capped request is done (the caller requests the next piece)
             }
 
             // Reserve the bytes under the lock so a concurrent split always sees the true position.

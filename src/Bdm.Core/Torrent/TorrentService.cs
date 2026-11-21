@@ -57,16 +57,22 @@ public sealed class TorrentService : IAsyncDisposable
             AutoSaveLoadDhtCache = true,
             AutoSaveLoadFastResume = true,
             AutoSaveLoadMagnetLinkMetadata = true,
-            ListenEndPoints = new Dictionary<string, IPEndPoint>
-            {
-                ["ipv4"] = new IPEndPoint(IPAddress.Any, port),
-                ["ipv6"] = new IPEndPoint(IPAddress.IPv6Any, port),
-            },
-            DhtEndPoint = _settings.TorrentDht ? new IPEndPoint(IPAddress.Any, port) : null,
+            ListenEndPoints = _settings.TorrentIncoming
+                ? new Dictionary<string, IPEndPoint>
+                {
+                    ["ipv4"] = new IPEndPoint(IPAddress.Any, port),
+                    ["ipv6"] = new IPEndPoint(IPAddress.IPv6Any, port),
+                }
+                // No incoming peers, but still a real port for tracker announces (loopback: no firewall prompt).
+                : new Dictionary<string, IPEndPoint> { ["ipv4"] = new IPEndPoint(IPAddress.Loopback, port) },
+            DhtEndPoint = _settings.TorrentDht && _settings.TorrentIncoming ? new IPEndPoint(IPAddress.Any, port) : null,
+            AllowLocalPeerDiscovery = _settings.TorrentIncoming,
             MaximumUploadRate = _settings.TorrentUploadLimitKBps * 1024,
             MaximumDownloadRate = _settings.GlobalSpeedLimitKBps * 1024,
         };
-        _engine = new ClientEngine(builder.ToSettings());
+        // Our own HTTP clients for tracker announces: IPv4 is tried properly even where IPv6 is broken.
+        var factories = new Factories().WithHttpClientCreator(family => Http.HttpFactory.CreateClient(family));
+        _engine = new ClientEngine(builder.ToSettings(), factories);
         return _engine;
     }
 
@@ -205,6 +211,17 @@ public sealed class TorrentService : IAsyncDisposable
         {
             _gate.Release();
         }
+    }
+
+    /// <summary>Tracker and peer status for troubleshooting ("why no peers?").</summary>
+    public string Describe(Guid jobId)
+    {
+        TorrentManager? m;
+        lock (_managers) _managers.TryGetValue(jobId, out m);
+        if (m is null) return "not running";
+        var trackers = m.TrackerManager.Tiers.SelectMany(t => t.Trackers)
+            .Select(tr => $"{tr.Uri.Host}: {tr.Status}{(string.IsNullOrEmpty(tr.WarningMessage) ? "" : " " + tr.WarningMessage)}{(string.IsNullOrEmpty(tr.FailureMessage) ? "" : " " + tr.FailureMessage)}");
+        return $"state={m.State} open={m.OpenConnections} available={m.Peers.Available} seeds={m.Peers.Seeds} | {string.Join("; ", trackers)}";
     }
 
     /// <summary>Stops a torrent and removes it from the engine (optionally deleting downloaded data).</summary>

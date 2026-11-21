@@ -89,6 +89,12 @@ public sealed class DownloadJob
     public List<string>? TorrentSkippedFiles { get; set; }
     public long TorrentUploaded { get; set; }
 
+    /// <summary>
+    /// Sub-downloads that are merged at the end (YouTube HD: a video-only and an audio-only stream).
+    /// Each part keeps its own segments, so pausing and resuming works for both.
+    /// </summary>
+    public List<DownloadJob>? Parts { get; set; }
+
     /// <summary>Automatic retries used after network failures (long downloads).</summary>
     public int AutoRetries { get; set; }
 
@@ -116,6 +122,7 @@ public sealed class DownloadJob
     {
         get
         {
+            if (Parts is { Count: > 0 } parts) return parts.Sum(p => p.DownloadedBytes);
             lock (Sync)
             {
                 // HTTP files and YouTube streams fetched by the segmented engine track progress per segment;
@@ -131,7 +138,11 @@ public sealed class DownloadJob
     [JsonIgnore]
     public int ActiveConnections
     {
-        get { lock (Sync) return Segments.Count(s => s.Active); }
+        get
+        {
+            if (Parts is { Count: > 0 } parts) return parts.Sum(p => p.ActiveConnections);
+            lock (Sync) return Segments.Count(s => s.Active);
+        }
     }
 
     [JsonIgnore] internal CancellationTokenSource? Cts { get; set; }
@@ -158,6 +169,7 @@ public sealed class DownloadJob
                 HlsDone = HlsDone is null ? null : new(HlsDone), HlsSegmentCount = HlsSegmentCount,
                 TorrentFile = TorrentFile, TorrentSkippedFiles = TorrentSkippedFiles is null ? null : new(TorrentSkippedFiles),
                 TorrentUploaded = TorrentUploaded, AutoRetries = AutoRetries,
+                Parts = Parts?.Select(p => p.CloneForSave()).ToList(),
             };
         }
     }

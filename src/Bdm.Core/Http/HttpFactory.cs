@@ -9,6 +9,35 @@ public static class HttpFactory
     public const string UserAgent =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36";
 
+    /// <summary>Client that only uses one address family (torrent trackers announce once per family).</summary>
+    public static HttpClient CreateClient(AddressFamily onlyFamily)
+    {
+        var handler = new SocketsHttpHandler
+        {
+            AutomaticDecompression = DecompressionMethods.All,
+            ConnectTimeout = TimeSpan.FromSeconds(8),
+            PooledConnectionLifetime = TimeSpan.FromMinutes(5),
+            ConnectCallback = async (ctx, ct) =>
+            {
+                var addresses = (await Dns.GetHostAddressesAsync(ctx.DnsEndPoint.Host, ct)).Where(a => a.AddressFamily == onlyFamily).ToArray();
+                if (addresses.Length == 0) throw new HttpRequestException($"{ctx.DnsEndPoint.Host} has no {(onlyFamily == AddressFamily.InterNetworkV6 ? "IPv6" : "IPv4")} address.");
+                var socket = new Socket(onlyFamily, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
+                try
+                {
+                    await socket.ConnectAsync(addresses, ctx.DnsEndPoint.Port, ct);
+                    return new NetworkStream(socket, ownsSocket: true);
+                }
+                catch
+                {
+                    socket.Dispose();
+                    throw;
+                }
+            },
+        };
+        // No browser User-Agent here: trackers may answer browsers with an HTML page instead of tracker data.
+        return new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) };
+    }
+
     public static HttpClient CreateClient()
     {
         var handler = new SocketsHttpHandler

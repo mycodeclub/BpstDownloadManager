@@ -37,6 +37,8 @@ public sealed class AppSettings
     public int TorrentUploadLimitKBps { get; set; }
     public bool TorrentDht { get; set; } = true;
     public bool TorrentPortForwarding { get; set; } = true;
+    /// <summary>Accept incoming peer connections (faster; Windows asks once to allow it through the firewall).</summary>
+    public bool TorrentIncoming { get; set; } = true;
 
     // ---- desktop behaviour
     public bool MonitorClipboard { get; set; } = true;
@@ -57,6 +59,9 @@ public sealed class AppSettings
     public string? CookiesFromBrowser { get; set; }
 
     public bool AutoUpdateYtDlp { get; set; } = true;
+
+    /// <summary>Desktop: install yt-dlp/FFmpeg automatically the first time a video is downloaded.</summary>
+    public bool AutoInstallVideoTools { get; set; } = true;
     public DateTime LastYtDlpUpdateCheckUtc { get; set; }
 
     internal static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };

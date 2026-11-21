@@ -7,8 +7,11 @@ public partial class App : MauiWinUIApplication
 {
     public App()
     {
-        var args = Environment.GetCommandLineArgs().Skip(1).Where(a => !a.StartsWith("--", StringComparison.Ordinal)).ToArray();
-        if (!SingleInstance.Claim(args))
+        var all = Environment.GetCommandLineArgs().Skip(1).ToArray();
+        Bdm.App.App.StartupArgs = all.Where(a => a.StartsWith("--", StringComparison.Ordinal)).ToArray();
+        var args = all.Where(a => !a.StartsWith("--", StringComparison.Ordinal)).ToArray();
+        bool testing = all.Any(a => a is "--self-test" || a.StartsWith("--page=", StringComparison.Ordinal));
+        if (!testing && !SingleInstance.Claim(args))
         {
             Environment.Exit(0); // the running BDM got the link
             return;
@@ -22,7 +25,7 @@ public partial class App : MauiWinUIApplication
                 : (arg, null);
         }
 
-        SingleInstance.Listen(message => MainThread.BeginInvokeOnMainThread(async () =>
+        if (!testing) SingleInstance.Listen(message => MainThread.BeginInvokeOnMainThread(async () =>
         {
             AppNavigation.Get<IPlatformServices>().BringToFront();
             if (message.Length == 0) return;
