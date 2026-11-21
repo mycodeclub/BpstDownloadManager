@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BpstVideoDownloader – free open-source download manager for Windows</title>
-<meta name="description" content="BpstVideoDownloader by BitProSoftTech: free, open-source Windows download manager with multi-connection downloads, resume, clipboard capture, YouTube and streaming video (HLS/DASH, blob: players).">
-<meta property="og:title" content="BpstVideoDownloader – free open-source download manager">
+<title>BDM – free open-source download manager for Windows and Android</title>
+<meta name="description" content="BDM by BitProSoftTech: free, open-source Windows download manager with multi-connection downloads, resume, clipboard capture, YouTube and streaming video (HLS/DASH, blob: players).">
+<meta property="og:title" content="BDM – free open-source download manager">
 <meta property="og:description" content="Multi-connection downloads, resume, clipboard capture, YouTube and streaming video. A product of BitProSoftTech.">
 <meta property="og:image" content="assets/screenshot-main.png">
 <link rel="icon" href="assets/icon-256.png">
@@ -102,7 +102,7 @@
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#"><img src="assets/icon-256.png" alt="">BpstVideoDownloader</a>
+    <a class="brand" href="#"><img src="assets/icon-256.png" alt="">BDM</a>
     <nav aria-label="Sections">
       <a href="#features">Features</a>
       <a href="#video">Video</a>
@@ -116,15 +116,15 @@
 
 <main>
   <div class="wrap hero">
-    <span class="badge">Free &amp; open source · MIT License · Windows 10 / 11</span>
+    <span class="badge">BDM 2.0 · Free &amp; open source · Windows &amp; Android</span>
     <h1>Download anything,<br><span class="grad">at full speed.</span></h1>
-    <p class="lead">BpstVideoDownloader splits every download across up to 32 connections, resumes after pauses and crashes, catches links you copy, and saves videos from YouTube and 1000+ sites, including streaming players that only show a <code>blob:</code> address.</p>
+    <p class="lead">Files, games, ISOs, YouTube in HD, streaming (<code>blob:</code>) videos and torrents, in one app on your PC and your phone. Up to 32 connections per file, resume after anything, and ⚡ Focus to give one download your whole connection.</p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-Setup.exe">
+      <a class="btn primary" href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-Setup.exe">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>
         Download for Windows
       </a>
-      <a class="btn" href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-portable.exe">Portable .exe</a>
+      <a class="btn" href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-android.apk">Android APK</a>
       <a class="btn" href="https://github.com/mycodeclub/BpstDownloadManager">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"/></svg>
         Source code
@@ -132,14 +132,14 @@
     </div>
     <p class="fine">A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.com">bitprosofttech.com</a> · +(91)-82-9910-1616</p>
     <figure class="shot">
-      <img src="assets/screenshot-main.png" width="1180" height="660" alt="BpstVideoDownloader main window with a list of downloads, progress bars, categories and the BitProSoftTech credit in the corner">
+      <img src="assets/screenshot-main.png" width="1180" height="660" alt="BDM main window with a list of downloads, progress bars, categories and the BitProSoftTech credit in the corner">
     </figure>
   </div>
 
   <section id="features">
     <div class="wrap">
       <h2>Everything a download manager should do</h2>
-      <p class="sub">Built from scratch in C# on .NET 10 and WPF, with no ads, no bundled offers and no tracking.</p>
+      <p class="sub">Built from scratch in C# on .NET 10 and .NET MAUI, with no ads, no bundled offers and no tracking.</p>
       <div class="grid">
         <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
           <h3>Multi-connection downloads</h3><p>Each file is split into byte ranges fetched in parallel over 1–32 connections, often several times faster than a browser.</p></div>
@@ -150,13 +150,19 @@
         <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M8 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/></svg></div>
           <h3>Clipboard capture</h3><p>Copy a file or video link in any app and the download dialog pops up. You can also drag links onto the window or press Ctrl+V.</p></div>
         <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-3v10l-5-3"/></svg></div>
-          <h3>YouTube &amp; 1000+ sites</h3><p>Video pages are handled by the open-source yt-dlp. Choose Best, MP4, 4K to 360p, or MP3/M4A audio only.</p></div>
+          <h3>YouTube in HD &amp; 1000+ sites</h3><p>Separate HD video and audio streams are downloaded in parallel and merged into one MP4. Choose Best, MP4, 4K to 360p, or audio only. Works on Android too.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v6a6 6 0 0 0 12 0V3"/><path d="M6 3h4M14 3h4M6 7h4M14 7h4"/></svg></div>
+          <h3>Torrents</h3><p>Magnet links and .torrent files: pick the files you want, DHT, peer exchange, automatic router port opening, fast resume and a seeding ratio.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg></div>
+          <h3>⚡ Focus mode</h3><p>Need one file now? Focus gives it the whole connection; the others slow to a trickle but keep their place, and go back to normal when it's done.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+          <h3>Android app</h3><p>The same engine on your phone: runs in the background with a progress notification, "Share → BDM" from Chrome or YouTube, and files land in Download/BDM.</p></div>
         <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
           <h3>Video Grabber</h3><p>For <code>blob:</code> players and unsupported sites: open the page, press Play, and download the real HLS, DASH or MP4 stream it detects.</p></div>
         <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h10M4 17h7"/></svg></div>
           <h3>Queue &amp; categories</h3><p>Choose how many downloads run at once. Files are sorted into Video, Music, Documents, Compressed, Programs and Images.</p></div>
         <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg></div>
-          <h3>Lives in the tray</h3><p>Keeps downloading in the notification area, shows a notice when a file is done, and follows the Windows light or dark theme.</p></div>
+          <h3>Built for long downloads</h3><p>Automatic retries when the network drops, a check that the server's file didn't change, keep-awake while downloading, and a speed limit if you need it.</p></div>
       </div>
     </div>
   </section>
@@ -165,7 +171,7 @@
     <div class="wrap how">
       <div>
         <h2>How the speed-up works</h2>
-        <p class="sub">Servers often limit the speed of a single connection. BpstVideoDownloader asks for different parts of the file at the same time and writes each part straight into its place on disk.</p>
+        <p class="sub">Servers often limit the speed of a single connection. BDM asks for different parts of the file at the same time and writes each part straight into its place on disk.</p>
         <ol class="steps">
           <li>It checks the file size and whether the server allows byte-range requests.</li>
           <li>It splits the file into parts, one per connection.</li>
@@ -200,8 +206,8 @@
       <h2>Video downloads</h2>
       <p class="sub">Three ways in, depending on what you have.</p>
       <div class="grid">
-        <div class="card"><h3>A video page link</h3><p>Paste or copy a YouTube (or other site) link. Pick a quality and download. FFmpeg joins the HD video and audio streams.</p></div>
-        <div class="card"><h3>Age-restricted or private</h3><p>Use <em>Sign in to YouTube</em> once, inside the app. Your password goes only to Google; the session stays on your PC and you can sign out any time.</p></div>
+        <div class="card"><h3>A video page link</h3><p>Paste, copy or share a YouTube (or other site) link and pick a quality. The HD video and audio streams are joined into one MP4: by FFmpeg on Windows (installed automatically the first time) and by Android's own media muxer on phones.</p></div>
+        <div class="card"><h3>Age-restricted or private</h3><p>Use <em>Sign in to YouTube</em> once, inside the app. Your password goes only to Google; the session stays on your device and you can sign out any time.</p></div>
         <div class="card"><h3>A <code>blob:</code> address</h3><p>A blob link only exists inside the browser tab that made it. Open the page in the Video Grabber, press Play, and download the stream behind it.</p></div>
       </div>
       <p class="fine" style="margin-top: 20px">Copy-protected (DRM) streams such as Netflix, Prime Video or Disney+ can't be downloaded, and the Grabber tells you when a page uses DRM. Only download content you have the right to download.</p>
@@ -213,12 +219,12 @@
       <h2>Install</h2>
       <p class="sub">No administrator rights needed. .NET is built in, so nothing else has to be installed first.</p>
       <div class="grid">
-        <div class="card"><h3>Installer (recommended)</h3>
-          <p><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-Setup.exe">BpstVideoDownloader-Setup.exe</a> adds a Start menu shortcut and an uninstaller, and can download the video tools (yt-dlp, FFmpeg, Deno) during setup.</p></div>
-        <div class="card"><h3>Portable</h3>
-          <p><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-portable.exe">BpstVideoDownloader-portable.exe</a> is a single file: copy it anywhere and run it. Set <code>BPSTVD_DATA_DIR</code> to keep its data next to it.</p></div>
-        <div class="card"><h3>“Windows protected your PC”</h3>
-          <p>Release builds aren't code-signed yet, so Windows SmartScreen may warn on first run. Click <strong>More info → Run anyway</strong>. On PCs with Smart App Control turned on, unsigned apps are blocked.</p></div>
+        <div class="card"><h3>Windows 10 / 11</h3>
+          <p><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-Setup.exe">BDM-Setup.exe</a> adds a Start menu shortcut and an uninstaller, can open magnet links and .torrent files, and upgrades older versions keeping your downloads.</p></div>
+        <div class="card"><h3>Android 8+</h3>
+          <p><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-android.apk">BDM-android.apk</a>: open it on your phone and allow “Install unknown apps” for your browser. Files are saved to Download/BDM.</p></div>
+        <div class="card"><h3>Security warnings</h3>
+          <p>Builds aren't code-signed yet. On Windows, SmartScreen may warn: click <strong>More info → Run anyway</strong>. PCs with Smart App Control turned on block unsigned apps.</p></div>
       </div>
       <p class="fine" style="margin-top: 18px">All releases, with notes and checksums: <a href="https://github.com/mycodeclub/BpstDownloadManager/releases">github.com/mycodeclub/BpstDownloadManager/releases</a></p>
     </div>
@@ -227,7 +233,7 @@
   <section id="faq">
     <div class="wrap">
       <h2>Questions</h2>
-      <details><summary>Is it really free?</summary><p>Yes. BpstVideoDownloader is free and open source under the MIT License: no ads, no bundled software, no telemetry. You can read, change and share the code.</p></details>
+      <details><summary>Is it really free?</summary><p>Yes. BDM is free and open source under the MIT License: no ads, no bundled software, no telemetry. You can read, change and share the code.</p></details>
       <details><summary>Why does it need yt-dlp, FFmpeg and Deno?</summary>
         <ul>
           <li><strong>yt-dlp</strong> finds the real video behind a YouTube or site page. Sites change often; yt-dlp is updated just as often, and the app updates it daily.</li>
@@ -236,24 +242,25 @@
         </ul>
         <p>They're separate open-source programs, downloaded from their official GitHub releases into the app's own folder, not bundled.</p></details>
       <details><summary>Why can't I download a blob: link directly?</summary><p>A <code>blob:</code> address is a temporary in-memory handle inside one browser tab, so no outside program can open it. The player behind it loads a normal stream; the Video Grabber catches that stream while the page plays.</p></details>
-      <details><summary>Where is my data stored?</summary><p>In <code>%LOCALAPPDATA%\BpstVideoDownloader</code>: the download list, settings, video tools, logs and (if you used it) your YouTube sign-in. Nothing is sent anywhere except the downloads you start.</p></details>
-      <details><summary>Something went wrong. How do I report it?</summary><p>Open an issue on <a href="https://github.com/mycodeclub/BpstDownloadManager/issues">GitHub</a> and attach the log from <code>%LOCALAPPDATA%\BpstVideoDownloader\logs</code>.</p></details>
+      <details><summary>Where is my data stored?</summary><p>In <code>%LOCALAPPDATA%\BDM</code>: the download list, settings, video tools, logs and (if you used it) your YouTube sign-in. Nothing is sent anywhere except the downloads you start.</p></details>
+      <details><summary>Something went wrong. How do I report it?</summary><p>Open an issue on <a href="https://github.com/mycodeclub/BpstDownloadManager/issues">GitHub</a> and attach the log from <code>%LOCALAPPDATA%\BDM\logs</code>.</p></details>
     </div>
   </section>
 
   <section id="build" style="background: var(--surface-2); border-block: 1px solid var(--border);">
     <div class="wrap">
       <h2>Build from source</h2>
-      <p class="sub">Requires Windows 10/11 and the .NET 10 SDK. Contributions are welcome.</p>
+      <p class="sub">Requires Windows 10/11, the .NET 10 SDK with the MAUI workloads, and (for Android) the Android SDK and a JDK, all included in Visual Studio's .NET MAUI workload. Contributions are welcome.</p>
 <pre>git clone https://github.com/mycodeclub/BpstDownloadManager.git
 cd BpstDownloadManager
-dotnet test
-dotnet run --project src/BpstVideoDownloader.App</pre>
+dotnet test tests/Bdm.Core.Tests
+dotnet build src/Bdm.App -f net10.0-windows10.0.19041.0
+dotnet build src/Bdm.App -f net10.0-android</pre>
       <div class="table-wrap">
         <table>
           <tr><th>Folder</th><th>What's inside</th></tr>
-          <tr><td><code>src/BpstVideoDownloader.Core</code></td><td>The engine: segmented downloader, queue and saved state, yt-dlp integration, stream detection</td></tr>
-          <tr><td><code>src/BpstVideoDownloader.App</code></td><td>The WPF app: windows, clipboard capture, tray icon, Video Grabber, YouTube sign-in</td></tr>
+          <tr><td><code>src/Bdm.Core</code></td><td>The engine for every platform: segmented downloads, HLS, torrents, YouTube, queue, Focus mode, speed limits</td></tr>
+          <tr><td><code>src/Bdm.App</code></td><td>The .NET MAUI app (Windows, Android, iOS-ready): pages, Video Grabber, YouTube sign-in, platform services</td></tr>
           <tr><td><code>tests/</code></td><td>Unit tests, including downloads against a local test server</td></tr>
           <tr><td><code>installer/</code></td><td>Inno Setup script; <code>build-installer.ps1</code> builds the exe and installer</td></tr>
         </table>
@@ -277,7 +284,7 @@ dotnet run --project src/BpstVideoDownloader.App</pre>
 
 <footer>
   <div class="wrap">
-    <span>© 2026 BitProSoftTech and BpstVideoDownloader contributors · <a href="https://github.com/mycodeclub/BpstDownloadManager/blob/main/LICENSE">MIT License</a></span>
+    <span>© 2026 BitProSoftTech and BDM contributors · <a href="https://github.com/mycodeclub/BpstDownloadManager/blob/main/LICENSE">MIT License</a></span>
     <span>yt-dlp, FFmpeg and Deno are separate projects under their own licenses.</span>
   </div>
 </footer>

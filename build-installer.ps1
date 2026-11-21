@@ -1,17 +1,23 @@
-# Builds publish\BpstVideoDownloader.exe (self-contained, single file) and dist\BpstVideoDownloader-Setup-<version>.exe.
-# Requires the .NET 10 SDK and Inno Setup 6 (winget install JRSoftware.InnoSetup).
-param([string]$Version = "0.1.0")
+# Builds BDM 2.x release packages:
+#   dist\BDM-Setup-<version>.exe   Windows installer (Inno Setup 6: winget install JRSoftware.InnoSetup)
+#   dist\BDM-<version>-android.apk  Android app (needs the .NET MAUI Android workload, Android SDK and JDK)
+param([string]$Version = "2.0.0", [switch]$SkipAndroid)
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
+New-Item -ItemType Directory -Force dist | Out-Null
 
-dotnet publish src/BpstVideoDownloader.App -c Release -r win-x64 --self-contained `
-    -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true `
-    -p:Version=$Version -o publish
-if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed" }
+# ---- Windows
+Remove-Item publish\windows -Recurse -Force -ErrorAction SilentlyContinue
+dotnet publish src/Bdm.App -f net10.0-windows10.0.19041.0 -c Release `
+    -p:ApplicationDisplayVersion=$Version -p:Version=$Version -o publish\windows
+if ($LASTEXITCODE -ne 0) { throw "Windows publish failed" }
 
-# Refuse to package a build whose windows don't open.
-$selfTest = Start-Process publish\BpstVideoDownloader.exe -ArgumentList "--self-test" -PassThru -Wait
-if ($selfTest.ExitCode -ne 0) { throw "UI self-test failed - see %LOCALAPPDATA%\BpstVideoDownloader\logs" }
+# Refuse to package a build whose pages don't open.
+$testData = Join-Path $env:TEMP "bdm-selftest-$([guid]::NewGuid().ToString('N'))"
+$env:BDM_DATA_DIR = $testData
+$selfTest = Start-Process publish\windows\BDM.exe -ArgumentList "--self-test" -PassThru -Wait
+Remove-Item Env:BDM_DATA_DIR
+if ($selfTest.ExitCode -ne 0) { Get-Content "$testData\logs\*.log"; throw "UI self-test failed" }
 Write-Host "UI self-test passed."
 
 $iscc = @(
@@ -20,7 +26,16 @@ $iscc = @(
     "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
 ) | Where-Object { Test-Path $_ } | Select-Object -First 1
 if (-not $iscc) { throw "Inno Setup 6 not found. Install it with: winget install JRSoftware.InnoSetup" }
-
-& $iscc "/DAppVersion=$Version" installer\BpstVideoDownloader.iss
+& $iscc "/DAppVersion=$Version" installer\BDM.iss
 if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
-Get-Item "dist\BpstVideoDownloader-Setup-$Version.exe"
+
+# ---- Android
+if (-not $SkipAndroid) {
+    Remove-Item publish\android -Recurse -Force -ErrorAction SilentlyContinue
+    dotnet publish src/Bdm.App -f net10.0-android -c Release -p:ApplicationDisplayVersion=$Version -o publish\android
+    if ($LASTEXITCODE -ne 0) { throw "Android publish failed" }
+    $apk = Get-ChildItem publish\android -Filter "*-Signed.apk" | Select-Object -First 1
+    Copy-Item $apk.FullName "dist\BDM-$Version-android.apk" -Force
+}
+
+Get-ChildItem dist -File | Where-Object Name -like "BDM-*" | Select-Object Name, @{ n = 'MB'; e = { [math]::Round($_.Length / 1MB, 1) } }

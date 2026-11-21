@@ -2,12 +2,12 @@ name: build
 
 on:
   push:
-    branches: [main]
+    branches: [main, bdm-2.0]
     tags: ["v*"]
   pull_request:
 
 permissions:
-  contents: write   # needed to attach the installer to a GitHub Release on tags
+  contents: write   # attach installers to a GitHub Release on tags
 
 jobs:
   build:
@@ -19,53 +19,52 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Test
-        run: dotnet test BpstVideoDownloader.slnx -c Release
+      - uses: actions/setup-java@v5
+        with:
+          distribution: microsoft
+          java-version: "21"
 
-      - name: UI self-test (opens every window)
-        shell: pwsh
-        run: |
-          dotnet build src/BpstVideoDownloader.App -c Release
-          $p = Start-Process src/BpstVideoDownloader.App/bin/Release/net10.0-windows/BpstVideoDownloader.exe -ArgumentList '--self-test' -PassThru -Wait
-          Get-Content "$env:LOCALAPPDATA/BpstVideoDownloader/logs/*.log"
-          if ($p.ExitCode -ne 0) { throw "UI self-test failed" }
+      - name: Install .NET MAUI workloads
+        run: dotnet workload install maui-windows maui-android
 
       - name: Install Inno Setup
         run: choco install innosetup -y --no-progress
 
-      - name: Build installer
+      - name: Test
+        run: dotnet test tests/Bdm.Core.Tests -c Release
+
+      - name: Build Windows installer + Android APK (includes the UI self-test)
         shell: pwsh
         run: |
-          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.TrimStart('v') } else { '0.1.0' }
-          dotnet publish src/BpstVideoDownloader.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:Version=$version -o publish
-          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$version" installer\BpstVideoDownloader.iss
-          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
-          # Stable names so ".../releases/latest/download/<name>" links on the website never change.
-          Copy-Item "dist/BpstVideoDownloader-Setup-$version.exe" dist/BpstVideoDownloader-Setup.exe
-          Copy-Item publish/BpstVideoDownloader.exe dist/BpstVideoDownloader-portable.exe
-          Get-ChildItem dist/*.exe | Get-FileHash -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" } | Set-Content dist/SHA256SUMS.txt
+          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.TrimStart('v') } else { '2.0.0' }
+          ./build-installer.ps1 -Version $version
+          # Stable names, so ".../releases/latest/download/<name>" links on the website never change.
+          Copy-Item "dist/BDM-Setup-$version.exe" dist/BDM-Setup.exe
+          Copy-Item "dist/BDM-$version-android.apk" dist/BDM-android.apk
+          Get-ChildItem dist -File | Where-Object Name -like 'BDM-*' | Get-FileHash -Algorithm SHA256 |
+            ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" } | Set-Content dist/SHA256SUMS.txt
           Get-Content dist/SHA256SUMS.txt
 
       - uses: actions/upload-artifact@v4
         with:
-          name: BpstVideoDownloader
+          name: BDM
           path: |
-            dist/*.exe
+            dist/BDM-*
             dist/SHA256SUMS.txt
 
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          name: BpstVideoDownloader ${{ github.ref_name }}
+          name: BPST Download Manager ${{ github.ref_name }}
           generate_release_notes: true
           body: |
-            Free, open-source download manager for Windows 10/11, a product of BitProSoftTech (https://bitprosofttech.com).
+            Free, open-source download manager for Windows and Android, a product of BitProSoftTech (https://bitprosofttech.com).
 
-            **Download:** `BpstVideoDownloader-Setup.exe` (installer, recommended) or `BpstVideoDownloader-portable.exe` (single file, no install).
-            Builds are not code-signed yet: if Windows SmartScreen warns, click **More info → Run anyway**.
+            **Windows:** `BDM-Setup.exe` · **Android:** `BDM-android.apk`
+            Builds are not code-signed yet: Windows SmartScreen may warn (More info → Run anyway); on Android allow "install unknown apps" for your browser.
 
             Project page: https://mycodeclub.github.io/BpstDownloadManager/
           files: |
-            dist/*.exe
+            dist/BDM-*
             dist/SHA256SUMS.txt

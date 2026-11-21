@@ -1,7 +1,7 @@
 ﻿# Generates src/BpstVideoDownloader.App/Assets/velox.ico (original artwork: a down arrow over a speed bar).
 # Usage: powershell -ExecutionPolicy Bypass -File tools/make-icon.ps1
 Add-Type -AssemblyName System.Drawing
-$out = Join-Path $PSScriptRoot '..\src\BpstVideoDownloader.App\Assets\velox.ico'
+$out = Join-Path $PSScriptRoot '..\src\Bdm.App\Resources\AppIcon\bdm.ico'
 $sizes = 16, 24, 32, 48, 64, 128, 256
 $pngs = @()
 

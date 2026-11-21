@@ -70,9 +70,9 @@ public sealed class TorrentService : IAsyncDisposable
             MaximumUploadRate = _settings.TorrentUploadLimitKBps * 1024,
             MaximumDownloadRate = _settings.GlobalSpeedLimitKBps * 1024,
         };
-        // Our own HTTP clients for tracker announces: IPv4 is tried properly even where IPv6 is broken.
-        var factories = new Factories().WithHttpClientCreator(family => Http.HttpFactory.CreateClient(family));
-        _engine = new ClientEngine(builder.ToSettings(), factories);
+        // MonoTorrent's own tracker clients already announce per address family (IPv4 and IPv6 separately),
+        // so a broken IPv6 route doesn't block IPv4 announces.
+        _engine = new ClientEngine(builder.ToSettings());
         return _engine;
     }
 

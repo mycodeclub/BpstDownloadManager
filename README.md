@@ -1,13 +1,13 @@
 <p align="center"><img src="docs/assets/icon-256.png" width="96" alt=""></p>
 
-<h1 align="center">BpstVideoDownloader</h1>
+<h1 align="center">BDM: BPST Download Manager</h1>
 
-<p align="center"><strong>A free, open-source download manager for Windows, built with .NET 10 and WPF.</strong><br>
+<p align="center"><strong>Free, open-source download manager for Windows and Android, built with .NET 10 and .NET MAUI.</strong><br>
 A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.com">bitprosofttech.com</a> · +(91)-82-9910-1616</p>
 
 <p align="center">
-  <a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-Setup.exe"><b>⬇ Download for Windows</b></a> ·
-  <a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-portable.exe">Portable .exe</a> ·
+  <a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-Setup.exe"><b>⬇ Windows</b></a> ·
+  <a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-android.apk"><b>⬇ Android</b></a> ·
   <a href="https://mycodeclub.github.io/BpstDownloadManager/">Project page</a> ·
   <a href="https://github.com/mycodeclub/BpstDownloadManager/releases">All releases</a>
 </p>
@@ -15,116 +15,76 @@ A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.
 <p align="center">
   <a href="https://github.com/mycodeclub/BpstDownloadManager/actions/workflows/build.yml"><img src="https://github.com/mycodeclub/BpstDownloadManager/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078d4.svg" alt="Windows 10 and 11">
-  <img src="https://img.shields.io/badge/.NET-10-512bd4.svg" alt=".NET 10">
+  <img src="https://img.shields.io/badge/platforms-Windows%20%7C%20Android-0078d4.svg" alt="Windows and Android">
+  <img src="https://img.shields.io/badge/.NET-10%20LTS-512bd4.svg" alt=".NET 10 LTS">
 </p>
 
-![BpstVideoDownloader main window](docs/assets/screenshot-main.png)
+![BDM main window](docs/assets/screenshot-main.png)
 
-Copy a link anywhere in Windows and BpstVideoDownloader offers to download it. It uses many parallel connections and resumes after pauses, crashes or reboots. Video pages (YouTube and 1000+ other sites) and HLS/DASH streams go through [yt-dlp](https://github.com/yt-dlp/yt-dlp).
+> BDM is an independent project. It is not affiliated with, endorsed by or derived from any commercial download manager. All code and artwork are original and MIT licensed.
 
-> BpstVideoDownloader is an independent project. It is not affiliated with, endorsed by or derived from any commercial download manager. All code and artwork are original and MIT licensed.
+## What it downloads
 
-## Features
+| | How |
+|---|---|
+| **Any file**: programs, ZIPs, games, ISOs, multi-GB files | Up to 32 parallel connections, dynamic splitting, resume after pause/crash/reboot, changed-file detection, automatic retry when the network drops |
+| **YouTube** | HD/4K video and audio streams downloaded in parallel and merged into one MP4. Windows uses yt-dlp + FFmpeg (installed automatically on first use); Android uses a built-in downloader and the phone's own MediaMuxer |
+| **1000+ other video sites** | yt-dlp (Windows) |
+| **`blob:` / streaming videos** | Video Grabber: open the page, press Play, download the HLS (`.m3u8`), DASH or MP4 stream it detects. HLS uses a built-in downloader (parallel segments, AES-128, resume) on every platform |
+| **Torrents** | Magnet links and `.torrent` files, choose files, DHT, peer exchange, UPnP, fast resume, seeding ratio |
 
-- **Multi-connection downloads.** A file is split into byte ranges fetched in parallel (1–32 connections).
-- **Dynamic segmentation.** When a connection finishes early, it takes over half of the largest remaining range, so every connection stays busy until the end.
-- **Pause and resume.** Per-segment progress is saved, so downloads continue after pausing, closing the app or a crash. Retries use exponential backoff. If a server limits connections (HTTP 429/503), BpstVideoDownloader automatically drops to fewer connections.
-- **Clipboard capture.** Copy a file link or video link in any app, and the Add dialog pops up.
-- **Video and stream downloads** through yt-dlp:
-  - Quality presets: Best, MP4, 4K to 360p, MP3 or M4A audio.
-  - HLS/DASH fragments download in parallel.
-  - FFmpeg merges HD video and audio.
-- **YouTube sign-in** (built-in WebView2 window) for age-restricted, private and members-only videos. Firefox cookies and `cookies.txt` files also work.
-- **Video Grabber** for `blob:` players and sites yt-dlp doesn't support: catches HLS, DASH and MP4 streams while the page plays.
-- **One-click tool install.** yt-dlp, FFmpeg and Deno come from their official GitHub releases into `%LOCALAPPDATA%\BpstVideoDownloader\tools`.
-- **Queue.** Choose how many downloads run at once. Categories: Video, Music, Documents, Compressed, Programs, Images.
-- **Live segment map.** Shows each connection's progress for the selected download.
-- **Notification-area (tray) mode** with completion notifications.
-- **Drag and drop** links onto the window. Ctrl+V adds the link from the clipboard, Ctrl+N opens the Add dialog.
-- **Single instance.** `BpstVideoDownloader.exe <url>` hands the URL to the running app. This is the hook for browser integration.
-- **Windows themes.** Light and dark follow Windows (WPF Fluent theme).
+## Highlights
 
-## About `blob:` URLs
-
-A `blob:https://site/…` address is an in-memory object that exists only inside the browser tab that created it. No external program can open it, so a downloader can't fetch it directly. Behind the blob, the player loads a normal stream: usually an HLS (`.m3u8`) or DASH (`.mpd`) playlist, or an MP4.
-
-**Video Grabber** (toolbar, or the button that appears when you paste a `blob:` link):
-
-1. Open the video page in BpstVideoDownloader's built-in browser.
-2. Press Play.
-3. BpstVideoDownloader lists the real streams it sees on the network. Click **Download**.
-
-The page's Referer, Origin, User-Agent and cookies are passed along, so CDNs that check them still work. Pop-up windows are blocked.
-
-DRM-protected (copy-protected) videos, such as those on Netflix, Prime Video or Disney+, can't be downloaded. The grabber tells you when a page uses DRM.
+- **⚡ Focus mode.** Give one download the whole connection. The others slow down to a trickle but keep their connections (or pause, your choice), and everything returns to normal when it finishes.
+- **Speed limit.** Set an overall limit, so downloads don't take the whole connection while you work.
+- **Built for long downloads.** Per-part resume, automatic retries with backoff, a check that the server's file hasn't changed, keep-awake on Windows, and a foreground service with wake/Wi-Fi locks on Android.
+- **Catches links.** Clipboard capture on Windows, "Share → BDM" on Android, magnet/.torrent file associations, `BDM.exe <link>`.
+- **YouTube sign-in** for age-restricted, private and members-only videos. You sign in inside BDM, and the session stays on your device.
+- **Light and dark themes,** a desktop sidebar and phone navigation, all from one codebase.
 
 ## Install
 
-- **Installer:** [BpstVideoDownloader-Setup.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-Setup.exe). Per-user, no admin rights, Start menu shortcut and uninstaller. It can download the video tools during setup.
-- **Portable:** [BpstVideoDownloader-portable.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BpstVideoDownloader-portable.exe). A single file with .NET built in. Set the `BPSTVD_DATA_DIR` environment variable to keep its data in a folder of your choice.
+- **Windows 10/11:** [BDM-Setup.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-Setup.exe). Per-user install, no admin rights needed, and it upgrades BpstVideoDownloader / VeloxDM 0.x and keeps your downloads and settings.
+- **Android 8+:** [BDM-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-android.apk). Allow "Install unknown apps" for your browser. Files are saved to **Download/BDM**.
 
-Release builds aren't code-signed yet, so Windows SmartScreen may show "Windows protected your PC". Click **More info → Run anyway**. Each release lists SHA-256 checksums in `SHA256SUMS.txt`.
-
-## Troubleshooting
-
-- Logs: `%LOCALAPPDATA%\BpstVideoDownloader\logs`. Attach the latest log when you [open an issue](https://github.com/mycodeclub/BpstDownloadManager/issues).
-- `BpstVideoDownloader.exe --self-test` opens every window and exits with code 0 if they all work.
+Builds are not code-signed yet. On Windows, SmartScreen may say "Windows protected your PC": click **More info → Run anyway**. Each release lists SHA-256 checksums.
 
 ## Build
 
-Requirements: Windows 10/11 and the [.NET 10 SDK](https://dotnet.microsoft.com/download).
+Requirements: Windows 10/11, the [.NET 10 SDK](https://dotnet.microsoft.com/download) with the MAUI workloads (`dotnet workload install maui-windows maui-android`), the Android SDK and a JDK 17+ (both come with Visual Studio's ".NET MAUI" workload).
 
 ```powershell
 git clone https://github.com/mycodeclub/BpstDownloadManager.git
 cd BpstDownloadManager
-dotnet build
-dotnet test
-dotnet run --project src/BpstVideoDownloader.App
+dotnet test tests/Bdm.Core.Tests
+dotnet build src/Bdm.App -f net10.0-windows10.0.19041.0     # Windows
+dotnet build src/Bdm.App -f net10.0-android                  # Android
+.\build-installer.ps1 -Version 2.0.0                          # dist\BDM-Setup-2.0.0.exe + BDM-2.0.0-android.apk
 ```
 
-Self-contained single-file build (no .NET install needed on the target PC):
+iOS is prepared (`src/Bdm.App/Platforms/iOS`) but not shipped. Build it on a Mac with `-p:EnableIos=true`.
 
-```powershell
-dotnet publish src/BpstVideoDownloader.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
-```
-
-Installer (`dist\BpstVideoDownloader-Setup-<version>.exe`, per-user, no admin rights needed). Requires [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`winget install JRSoftware.InnoSetup`):
-
-```powershell
-.\build-installer.ps1 -Version 0.1.0
-```
-
-On GitHub, every push builds the installer as a workflow artifact. Pushing a tag such as `v0.1.0` also attaches the installer to a GitHub Release.
-
-> **Smart App Control:** with Smart App Control enforcing, Windows blocks unsigned binaries you build yourself. Locally built `BpstVideoDownloader.exe` and the test DLLs won't load. Use the CI build, a code-signed release, or a development machine/VM without Smart App Control.
+Real-internet tests (YouTube download + merge, torrent swarm) are opt-in: set `BDM_NET_TESTS=1`.
 
 ## Project layout
 
 | Path | Contents |
 |---|---|
-| `src/BpstVideoDownloader.Core` | UI-free engine: `SegmentedDownloader`, `HttpProbe`, `DownloadManager` (queue and persistence), `MediaDownloader` / `MediaTools` (yt-dlp), `UrlClassifier` |
-| `src/BpstVideoDownloader.App` | WPF app: main window, Add / Settings / Video tools dialogs, clipboard monitor, tray icon, single-instance pipe |
-| `tests/BpstVideoDownloader.Core.Tests` | xUnit tests against a local Kestrel server (parallel ranges, no-range fallback, pause/resume round-trip) |
-| `tools/make-icon.ps1` | Regenerates the app icon |
+| `src/Bdm.Core` | Platform-neutral engine: `SegmentedDownloader`, `HlsDownloader`, `TorrentService` (MonoTorrent), `YoutubeExplodeBackend` + `MediaDownloader` (yt-dlp), `DownloadManager` (queue, Focus, limits, retries, persistence) |
+| `src/Bdm.App` | .NET MAUI app: pages, view models, `Platforms/Windows` (single instance, clipboard, keep-awake), `Platforms/Android` (foreground service, MediaMuxer, share intents), `Platforms/iOS` |
+| `tests/Bdm.Core.Tests` | xUnit tests: segmented/HLS/AES/resume against a local test server, rate limiting, Focus, changed-file detection, torrents |
+| `installer/BDM.iss` | Windows installer (Inno Setup) |
+| `docs/` | Project website (GitHub Pages) |
 
-Data lives in `%LOCALAPPDATA%\BpstVideoDownloader`: `downloads.json`, `settings.json` and `tools\`.
+App data: `%LOCALAPPDATA%\BDM` on Windows and app-private storage on Android. It holds the download list, settings, logs and, on Windows, the video tools. `BDM.exe --self-test` opens every page and exits with 0 if they all work.
 
 ## Roadmap
 
-- Browser extension (Chrome/Edge/Firefox) that sends links and detected media streams to BpstVideoDownloader through native messaging.
-- Speed limiter and scheduler.
-- Batch / playlist downloads.
-- Per-site credentials and cookies.
-- Installer (MSIX/winget) with a signed binary.
-
-## Contributing
-
-Issues and pull requests are welcome. Please run `dotnet test` and `--self-test` before opening a pull request. The project website lives in [`docs/`](docs/index.html) and is published with GitHub Pages.
+See [ROADMAP.md](ROADMAP.md): what's still missing in today's download managers, and what's planned for BDM.
 
 ## Responsible use
 
-Only download content you have the right to download. Respect copyright and each website's terms of service. yt-dlp, FFmpeg and Deno are separate projects under their own licenses. BpstVideoDownloader downloads them on request and runs them as external programs.
+Only download content you have the right to download. Respect copyright and each site's terms. DRM-protected streams (Netflix, Prime Video, Disney+…) are not supported and won't be. BDM uses MonoTorrent (MIT), YoutubeExplode (LGPL-3.0) and, on Windows, the separate programs yt-dlp, FFmpeg and Deno under their own licenses.
 
 ## License
 

@@ -103,12 +103,13 @@ public sealed class NetworkTests : IDisposable
         Directory.CreateDirectory(_dir);
         using var http = HttpFactory.CreateClient();
 
-        // The current Ubuntu LTS desktop .torrent (file names change with point releases).
-        var index = await http.GetStringAsync("https://releases.ubuntu.com/noble/");
-        var name = Regex.Match(index, "href=\"(ubuntu-[0-9.]+-desktop-amd64\\.iso\\.torrent)\"").Groups[1].Value;
-        Assert.False(string.IsNullOrEmpty(name), "No .torrent link found on releases.ubuntu.com");
+        // Debian's current netinst .torrent (always served by Debian's tracker; the name changes with point releases).
+        const string baseUrl = "https://cdimage.debian.org/debian-cd/current/amd64/bt-cd/";
+        var index = await http.GetStringAsync(baseUrl);
+        var name = Regex.Match(index, "href=\"(debian-[0-9.]+-amd64-netinst\\.iso\\.torrent)\"").Groups[1].Value;
+        Assert.False(string.IsNullOrEmpty(name), "No .torrent link found on cdimage.debian.org");
         var torrentPath = Path.Combine(_dir, name);
-        await File.WriteAllBytesAsync(torrentPath, await http.GetByteArrayAsync("https://releases.ubuntu.com/noble/" + name));
+        await File.WriteAllBytesAsync(torrentPath, await http.GetByteArrayAsync(baseUrl + name));
 
         var settings = new AppSettings { TorrentIncoming = false, TorrentDht = false, TorrentPortForwarding = false };
         await using var service = new TorrentService(Path.Combine(_dir, "data"), settings);
@@ -126,7 +127,7 @@ public sealed class NetworkTests : IDisposable
         await service.StopAndRemoveAsync(job.Id, deleteData: true);
 
         Assert.True(got > 0, $"No data received from peers in 120 s ({detail}).");
-        Assert.StartsWith("ubuntu-", job.FileName);
-        Assert.True(job.TotalBytes > 1_000_000_000, "Expected the multi-GB ISO size from the torrent metadata.");
+        Assert.StartsWith("debian-", job.FileName);
+        Assert.True(job.TotalBytes > 300_000_000, "Expected the ISO size from the torrent metadata.");
     }
 }
