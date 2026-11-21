@@ -31,6 +31,14 @@ if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
 
 # ---- Android
 if (-not $SkipAndroid) {
+    # Release signing key: env vars (CI) or the local private folder created for BDM.
+    $localKey = Join-Path $env:USERPROFILE "BDM-signing\bdm-release.keystore"
+    if (-not $env:BDM_KEYSTORE -and (Test-Path $localKey)) {
+        $env:BDM_KEYSTORE = $localKey
+        $env:BDM_KEYSTORE_PASSWORD = Get-Content (Join-Path $env:USERPROFILE "BDM-signing\keystore-password.txt") -Raw
+    }
+    if ($env:BDM_KEYSTORE) { Write-Host "Signing the APK with the BDM release key." }
+    else { Write-Warning "No release key (BDM_KEYSTORE): the APK is signed with the debug key - fine for testing, NOT for publishing." }
     Remove-Item publish\android -Recurse -Force -ErrorAction SilentlyContinue
     dotnet publish src/Bdm.App -f net10.0-android -c Release -p:ApplicationDisplayVersion=$Version -o publish\android
     if ($LASTEXITCODE -ne 0) { throw "Android publish failed" }

@@ -30,6 +30,18 @@ jobs:
       - name: Install Inno Setup
         run: choco install innosetup -y --no-progress
 
+      - name: Android release signing key (from repository secrets)
+        shell: pwsh
+        env:
+          KEY_B64: ${{ secrets.BDM_KEYSTORE_BASE64 }}
+          KEY_PASS: ${{ secrets.BDM_KEYSTORE_PASSWORD }}
+        run: |
+          if (-not $env:KEY_B64) { Write-Warning "BDM_KEYSTORE_BASE64 secret not set: APK will be debug-signed."; exit 0 }
+          $path = Join-Path $env:RUNNER_TEMP "bdm-release.keystore"
+          [IO.File]::WriteAllBytes($path, [Convert]::FromBase64String($env:KEY_B64))
+          "BDM_KEYSTORE=$path" >> $env:GITHUB_ENV
+          "BDM_KEYSTORE_PASSWORD=$env:KEY_PASS" >> $env:GITHUB_ENV
+
       - name: Test
         run: dotnet test tests/Bdm.Core.Tests -c Release
 

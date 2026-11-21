@@ -42,6 +42,15 @@
 		<SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
 	</PropertyGroup>
 
+	<!-- Release signing: set BDM_KEYSTORE (path) and BDM_KEYSTORE_PASSWORD (env vars). The key is never in the repo. -->
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' And '$(Configuration)' == 'Release' And '$(BDM_KEYSTORE)' != ''">
+		<AndroidKeyStore>true</AndroidKeyStore>
+		<AndroidSigningKeyStore>$(BDM_KEYSTORE)</AndroidSigningKeyStore>
+		<AndroidSigningKeyAlias>bdm</AndroidSigningKeyAlias>
+		<AndroidSigningStorePass>env:BDM_KEYSTORE_PASSWORD</AndroidSigningStorePass>
+		<AndroidSigningKeyPass>env:BDM_KEYSTORE_PASSWORD</AndroidSigningKeyPass>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' And '$(Configuration)' == 'Release'">
 		<AndroidPackageFormats>apk</AndroidPackageFormats>
 	</PropertyGroup>
