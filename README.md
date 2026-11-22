@@ -41,6 +41,7 @@ A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.
 - **Catches links.** Clipboard capture on Windows, "Share → BDM" on Android, magnet/.torrent file associations, `BDM.exe <link>`.
 - **Facebook and Instagram videos and reels**. Public posts work straight away.
 - **Sign-in for YouTube, Instagram and Facebook** (Settings → Video) for age-restricted, private, members-only and login-only videos. You sign in on the site's own page inside BDM, and the session stays on your device.
+- **Smart Finder.** Search for anything (a game, a course, lectures, an e-book) and see where to get it legally: official stores to buy or rent first, then free and legal sources (official YouTube uploads, Project Gutenberg, public-domain Internet Archive collections, free learning platforms), then official Internet Archive torrents. One click hands a result to BDM. Known piracy sites and "crack/repack/leaked" uploads are filtered out.
 - **Clear answers for paid streaming services.** Netflix, Prime Video, JioHotstar, Disney+, SonyLIV, ZEE5 and similar links are recognised up front: BDM explains that they are DRM-protected and points you to the service's own offline downloads, instead of failing halfway.
 - **Light and dark themes,** a desktop sidebar and phone navigation, all from one codebase.
 

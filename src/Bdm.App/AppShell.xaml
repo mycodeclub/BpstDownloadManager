@@ -19,6 +19,9 @@
     <FlyoutItem Title="⬇  Downloads" Route="downloads">
         <ShellContent ContentTemplate="{DataTemplate views:DownloadsPage}" />
     </FlyoutItem>
+    <FlyoutItem Title="✨  Smart Finder" Route="finder">
+        <ShellContent ContentTemplate="{DataTemplate views:FinderPage}" />
+    </FlyoutItem>
     <FlyoutItem Title="🔍  Video Grabber" Route="grabber">
         <ShellContent ContentTemplate="{DataTemplate views:GrabberPage}" />
     </FlyoutItem>

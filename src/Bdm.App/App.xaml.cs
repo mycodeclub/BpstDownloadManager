@@ -47,6 +47,13 @@ public partial class App : Application
                 if (route == "add") await AppNavigation.OpenAddAsync("https://www.youtube.com/watch?v=eRsGyueVLvQ");
                 else await Shell.Current.GoToAsync("//" + route);
             }
+            // "BDM.exe --find=<words>": open Smart Finder and search.
+            if (StartupArgs.FirstOrDefault(a => a.StartsWith("--find=", StringComparison.Ordinal)) is { } findArg)
+            {
+                await Task.Delay(500);
+                await Shell.Current.GoToAsync("//finder");
+                if (Shell.Current.CurrentPage is Views.FinderPage finder) finder.Search(findArg["--find=".Length..].Trim('"'));
+            }
             // "BDM.exe --add=<link>": open the Add page with that link (browser hand-off, testing).
             if (StartupArgs.FirstOrDefault(a => a.StartsWith("--add=", StringComparison.Ordinal)) is { } addArg)
             {
@@ -84,7 +91,7 @@ public partial class App : Application
         return window;
     }
 
-    /// <summary>Command-line switches (desktop): --self-test, --page=downloads|grabber|settings|about|add, --add=&lt;url&gt;, --download=&lt;url&gt;.</summary>
+    /// <summary>Command-line switches (desktop): --self-test, --page=downloads|grabber|settings|about|add, --add=&lt;url&gt;, --download=&lt;url&gt;, --find=&lt;words&gt;.</summary>
     public static string[] StartupArgs { get; set; } = [];
 
     /// <summary>Opens every page and the Add dialog; used by the build check to catch runtime UI errors.</summary>

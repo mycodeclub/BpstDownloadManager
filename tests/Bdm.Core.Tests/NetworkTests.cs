@@ -130,4 +130,18 @@ public sealed class NetworkTests : IDisposable
         Assert.StartsWith("debian-", job.FileName);
         Assert.True(job.TotalBytes > 300_000_000, "Expected the ISO size from the torrent metadata.");
     }
+
+    [Theory]
+    [InlineData("GTA game", "Steam")]
+    [InlineData("angular course", "YouTube")]
+    [InlineData("sherlock holmes ebook", "Internet Archive")]
+    public async Task Smart_finder_searches_real_sources(string query, string expectedSource)
+    {
+        if (!Enabled) return;
+        using var http = HttpFactory.CreateClient();
+        var r = await Finder.SmartFinder.CreateDefault(http).SearchAsync(query, region: "IN");
+        Assert.Contains(r.Items, i => i.Source == expectedSource && !i.IsSearchLink);
+        Assert.Equal(Finder.FinderSection.BuyOrRent, r.Items[0].Section);
+        Assert.DoesNotContain(r.Items, i => Finder.SourceGuard.IsBlocked(i.Url));
+    }
 }

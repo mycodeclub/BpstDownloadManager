@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bdm.App.Views.FinderPage"
+             Title="Smart Finder"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageLight}, Dark={StaticResource PageDark}}">
+    <ScrollView>
+        <VerticalStackLayout Padding="{OnIdiom Phone=16, Default=24}" Spacing="14" MaximumWidthRequest="860">
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Find anything: games, courses, lectures, e-books, videos" FontAttributes="Bold" FontSize="16" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Entry x:Name="QueryEntry" Placeholder="e.g. GTA 6 · Angular course by Mosh · Sherlock Holmes ebook"
+                               ReturnType="Search" Completed="Search_Clicked" ClearButtonVisibility="WhileEditing" />
+                        <Button x:Name="SearchButton" Grid.Column="1" Text="Search" Clicked="Search_Clicked" Style="{StaticResource PrimaryButton}" />
+                    </Grid>
+                    <Label Style="{StaticResource Muted}" FontSize="12" LineBreakMode="WordWrap"
+                           Text="Official stores come first, then free sources that are legal to download: official uploads, public-domain and openly licensed works, and official torrents. Piracy sites are never shown." />
+                </VerticalStackLayout>
+            </Border>
+
+            <HorizontalStackLayout x:Name="BusyRow" Spacing="10" IsVisible="False">
+                <ActivityIndicator IsRunning="True" HeightRequest="20" WidthRequest="20" Color="{StaticResource Primary}" />
+                <Label x:Name="BusyLabel" Style="{StaticResource Muted}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <VerticalStackLayout x:Name="ResultsHost" Spacing="14" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -38,6 +38,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<DownloadsViewModel>();
         builder.Services.AddSingleton<DownloadsPage>();
         builder.Services.AddSingleton<GrabberPage>();
+        builder.Services.AddSingleton<FinderPage>();
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<AboutPage>();
         return builder.Build();
