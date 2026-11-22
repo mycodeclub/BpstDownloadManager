@@ -234,9 +234,9 @@ public sealed class MediaDownloader : IMediaBackend
             if (error.Contains("[Instagram]", StringComparison.OrdinalIgnoreCase))
                 return new MediaSignInRequiredException(signedIn
                     ? "Instagram didn't share this post with the signed-in account (private account you don't follow, or the sign-in expired). Sign in to Instagram again in Settings."
-                    : "Instagram only shows this post to signed-in users. Use Settings → Sign in to Instagram once, then Resume.");
+                    : "Instagram only shows this post to signed-in users. Sign in to Instagram once in BDM (Settings → Video), then try again.");
             if (error.Contains("[facebook]", StringComparison.OrdinalIgnoreCase))
-                return new MediaSignInRequiredException("Facebook only shows this video to signed-in users (or it's private). Use Settings → Sign in to Facebook once, then Resume.");
+                return new MediaSignInRequiredException("Facebook only shows this video to signed-in users (or it's private). Sign in to Facebook once in BDM (Settings → Video), then try again.");
             if (error.Contains("[hotstar]", StringComparison.OrdinalIgnoreCase))
                 return new InvalidOperationException(UrlClassifier.ProtectedMessage("JioHotstar"));
             return new MediaSignInRequiredException("This site needs you to be signed in. Use the sign-in options in Settings, then Resume.");
