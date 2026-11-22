@@ -2,7 +2,7 @@
 ; Build: .\build-installer.ps1  (publishes the MAUI app to publish\windows, runs the self-test, then compiles this)
 
 #ifndef AppVersion
-  #define AppVersion "2.0.0"
+  #define AppVersion "2.1.0"
 #endif
 #define AppName "BPST Download Manager"
 #define AppShort "BDM"

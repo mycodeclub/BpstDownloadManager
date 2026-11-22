@@ -1,7 +1,7 @@
 # Builds BDM 2.x release packages:
 #   dist\BDM-Setup-<version>.exe   Windows installer (Inno Setup 6: winget install JRSoftware.InnoSetup)
 #   dist\BDM-<version>-android.apk  Android app (needs the .NET MAUI Android workload, Android SDK and JDK)
-param([string]$Version = "2.0.0", [switch]$SkipAndroid)
+param([string]$Version = "2.1.0", [switch]$SkipAndroid)
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 New-Item -ItemType Directory -Force dist | Out-Null

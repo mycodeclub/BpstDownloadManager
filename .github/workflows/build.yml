@@ -48,7 +48,7 @@ jobs:
       - name: Build Windows installer + Android APK (includes the UI self-test)
         shell: pwsh
         run: |
-          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.TrimStart('v') } else { '2.0.0' }
+          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.TrimStart('v') } else { '2.1.0' }
           ./build-installer.ps1 -Version $version
           # Stable names, so ".../releases/latest/download/<name>" links on the website never change.
           Copy-Item "dist/BDM-Setup-$version.exe" dist/BDM-Setup.exe

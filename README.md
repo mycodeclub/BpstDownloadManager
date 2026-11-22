@@ -41,7 +41,12 @@ A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.
 - **Catches links.** Clipboard capture on Windows, "Share → BDM" on Android, magnet/.torrent file associations, `BDM.exe <link>`.
 - **Facebook and Instagram videos and reels**. Public posts work straight away.
 - **Sign-in for YouTube, Instagram and Facebook** (Settings → Video) for age-restricted, private, members-only and login-only videos. You sign in on the site's own page inside BDM, and the session stays on your device.
-- **Smart Finder.** Search for anything (a game, a course, lectures, an e-book) and see where to get it legally: official stores to buy or rent first, then free and legal sources (official YouTube uploads, Project Gutenberg, public-domain Internet Archive collections, free learning platforms), then official Internet Archive torrents. One click hands a result to BDM. Known piracy sites and "crack/repack/leaked" uploads are filtered out.
+- **Smart Finder.** Search once for download links of games, software, e-books & PDFs, documents, courses and music, with category filters (Games, Software, E-books & PDF, Documents, Courses, Music & audio, Other) and a Free / Paid filter. Results come in three groups:
+  - **Buy:** official stores with prices (Steam, Epic, PlayStation, Xbox, Microsoft Store, Google Play, Udemy, Amazon…).
+  - **Free downloads:** open-source release files from GitHub (pick the installer and BDM downloads it), free and open-source games, F-Droid and Flathub apps, public-domain e-books (Project Gutenberg, Internet Archive), open-access research papers (arXiv), free music.
+  - **Official torrents:** torrents published by the makers themselves (Linux distributions, Internet Archive).
+
+  Cracks, repacks and piracy sites are never shown; for paid games and software, BDM points to the official stores.
 - **Clear answers for paid streaming services.** Netflix, Prime Video, JioHotstar, Disney+, SonyLIV, ZEE5 and similar links are recognised up front: BDM explains that they are DRM-protected and points you to the service's own offline downloads, instead of failing halfway.
 - **Light and dark themes,** a desktop sidebar and phone navigation, all from one codebase.
 
@@ -62,7 +67,7 @@ cd BpstDownloadManager
 dotnet test tests/Bdm.Core.Tests
 dotnet build src/Bdm.App -f net10.0-windows10.0.19041.0     # Windows
 dotnet build src/Bdm.App -f net10.0-android                  # Android
-.\build-installer.ps1 -Version 2.0.0                          # dist\BDM-Setup-2.0.0.exe + BDM-2.0.0-android.apk
+.\build-installer.ps1 -Version 2.1.0                          # dist\BDM-Setup-2.1.0.exe + BDM-2.1.0-android.apk
 ```
 
 iOS is prepared (`src/Bdm.App/Platforms/iOS`) but not shipped. Build it on a Mac with `-p:EnableIos=true`.

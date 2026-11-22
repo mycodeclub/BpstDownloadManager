@@ -133,15 +133,19 @@ public sealed class NetworkTests : IDisposable
 
     [Theory]
     [InlineData("GTA game", "Steam")]
-    [InlineData("angular course", "YouTube")]
+    [InlineData("racing game", "GitHub")]
     [InlineData("sherlock holmes ebook", "Internet Archive")]
+    [InlineData("video editor software", "GitHub")]
+    [InlineData("transformer research paper", "arXiv")]
     public async Task Smart_finder_searches_real_sources(string query, string expectedSource)
     {
         if (!Enabled) return;
         using var http = HttpFactory.CreateClient();
         var r = await Finder.SmartFinder.CreateDefault(http).SearchAsync(query, region: "IN");
         Assert.Contains(r.Items, i => i.Source == expectedSource && !i.IsSearchLink);
-        Assert.Equal(Finder.FinderSection.BuyOrRent, r.Items[0].Section);
+        Assert.Equal(r.Items.Select(i => i.Section).Order(), r.Items.Select(i => i.Section)); // buy first, then free, then torrents
         Assert.DoesNotContain(r.Items, i => Finder.SourceGuard.IsBlocked(i.Url));
+        if (r.Items.FirstOrDefault(i => i.ReleaseFilesUrl is not null) is { } gh)
+            Assert.All(await Finder.GitHubProvider.GetReleaseFilesAsync(http, gh.ReleaseFilesUrl!), f => Assert.StartsWith("https://github.com/", f.Url));
     }
 }

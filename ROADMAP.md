@@ -11,6 +11,8 @@
 | **YouTube breaking every few weeks** | Users wait for an app update | ✅ yt-dlp auto-updates daily (Windows); built-in fallback |
 | **Silent corruption when the server file changes** | Resume glues two versions together | ✅ 2.0: If-Range detection, restarts cleanly |
 | **Ads, bundled offers, paid upgrades** | Common | ✅ Free and open source (MIT), no telemetry |
+| **Finding a genuine download** | Search engines full of fake "free download" and crack sites | ✅ 2.1: ✨ Smart Finder: official stores, free legal downloads (open-source installers, public-domain books, papers) and official torrents, with piracy sites filtered out |
+| **Facebook / Instagram and OTT links** | Fail with cryptic errors | ✅ 2.1: sign-in for login-only posts; DRM services (Netflix, Prime, JioHotstar…) explained up front |
 | **Browser integration without a paid extension** | Closed extensions | ⏳ planned: open-source Chrome/Edge/Firefox extension |
 | **Sync between PC and phone** | Rare | ⏳ planned: send a link from phone to PC (and back) on the same network |
 | **Verify downloads** | Manual hashing | ⏳ planned: paste a SHA-256/MD5 and BDM checks it |
@@ -18,14 +20,19 @@
 
 ## Next releases
 
-### 2.1
+### 2.1 (released)
+- ✨ Smart Finder with category and Free / Paid filters
+- Facebook and Instagram sign-in; clear DRM messages for OTT links
+
+### 2.2
+- Smart Finder deep web search (optional search-API key), with the same piracy filters
 - Browser extension (Chromium + Firefox): send links, catch downloads and detected video streams to BDM (native messaging / localhost bridge)
 - Checksum verification (SHA-256/SHA-1/MD5) on completion
 - Scheduler: time windows, Wi-Fi only (Android), pause on metered connections
 - Notification-area (tray) icon on Windows
 - Torrent file picker for magnet links after metadata arrives
 
-### 2.2
+### 2.3
 - Phone ↔ PC hand-off over the local network (QR pairing)
 - Playlist/channel downloads with per-item quality
 - Download categories with per-category folders and rules

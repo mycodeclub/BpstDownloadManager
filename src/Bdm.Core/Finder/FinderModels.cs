@@ -11,21 +11,61 @@ public enum FinderSection
 public enum FinderKind
 {
     Game,
-    Course,
-    Video,
-    Book,
-    Audio,
     Software,
+    Course,
+    Book,
+    Document,
+    Audio,
     Other,
 }
 
-/// <summary>What the user seems to be looking for; used to rank and pick sources.</summary>
+/// <summary>What the user is looking for (picked as a category, or guessed from the words); picks and ranks sources.</summary>
 public enum FinderIntent
 {
     Any,
     Game,
+    Software,
     Course,
     Book,
+    Document,
+    Audio,
+}
+
+/// <summary>Free/paid filter, applied to results already found.</summary>
+public enum FinderPrice
+{
+    Any,
+    Free,
+    Paid,
+}
+
+public static class FinderFilters
+{
+    /// <summary>
+    /// Category chips. <c>null</c> = "All" (BDM guesses the category from the words);
+    /// <see cref="FinderIntent.Any"/> = "Other" (no category, every general source).
+    /// </summary>
+    public static IReadOnlyList<(FinderIntent? Intent, string Label)> Categories { get; } =
+    [
+        (null, "All"),
+        (FinderIntent.Game, "🎮 Games"),
+        (FinderIntent.Software, "💻 Software"),
+        (FinderIntent.Course, "🎓 Courses"),
+        (FinderIntent.Book, "📚 E-books & PDF"),
+        (FinderIntent.Document, "📄 Documents"),
+        (FinderIntent.Audio, "🎵 Music & audio"),
+        (FinderIntent.Any, "Other"),
+    ];
+
+    public static IReadOnlyList<(FinderPrice Price, string Label)> Prices { get; } =
+        [(FinderPrice.Any, "Free + paid"), (FinderPrice.Free, "Free only"), (FinderPrice.Paid, "Paid only")];
+
+    public static bool Allows(this FinderPrice price, FinderSection section) => price switch
+    {
+        FinderPrice.Free => section != FinderSection.BuyOrRent,
+        FinderPrice.Paid => section == FinderSection.BuyOrRent,
+        _ => true,
+    };
 }
 
 public sealed record FinderQuery(string Text, FinderIntent Intent, string Region)
@@ -49,6 +89,9 @@ public sealed record FinderResult(FinderSection Section, FinderKind Kind, string
 
     /// <summary>A link BDM can download directly (video page, file or .torrent). Null = open in the browser only.</summary>
     public string? DownloadUrl { get; init; }
+
+    /// <summary>GitHub API address of the project's latest release; its files are listed when Download is pressed.</summary>
+    public string? ReleaseFilesUrl { get; init; }
 
     /// <summary>True for "search this store for your query" links (no specific item).</summary>
     public bool IsSearchLink { get; init; }
@@ -77,3 +120,6 @@ public interface IFinderProvider
 
     Task<IReadOnlyList<FinderResult>> SearchAsync(FinderQuery query, CancellationToken ct);
 }
+
+/// <summary>A downloadable file of a software release.</summary>
+public sealed record FinderFile(string Name, long Size, string Url);

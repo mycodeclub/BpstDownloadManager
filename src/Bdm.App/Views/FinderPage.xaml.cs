@@ -5,18 +5,73 @@ using Bdm.Core.Finder;
 namespace Bdm.App.Views;
 
 /// <summary>
-/// Smart Finder: search once, see where to buy or rent it, where it's free and legal, and official torrents.
+/// Smart Finder: search once for download links of games, software, e-books, documents and other files: where to
+/// buy it, free legal downloads (open-source release files, free games, public-domain files) and official torrents.
 /// Downloadable results open straight in BDM's Add page.
 /// </summary>
 public partial class FinderPage : ContentPage
 {
     private readonly SmartFinder _finder;
+    private readonly HttpClient _http;
     private CancellationTokenSource? _cts;
+    private FinderIntent? _category;           // null = "All": guess the category from the words
+    private FinderPrice _price = FinderPrice.Any;
+    private FinderResults? _last;
 
     public FinderPage(DownloadManager manager)
     {
         InitializeComponent();
+        _http = manager.Http;
         _finder = SmartFinder.CreateDefault(manager.Http);
+        BuildChips();
+    }
+
+    private void BuildChips()
+    {
+        CategoryChips.Children.Clear();
+        foreach (var (intent, label) in FinderFilters.Categories)
+        {
+            var chip = Chip(label, intent == _category);
+            ToolTipProperties.SetText(chip, intent is null ? "Guess the category from your words" : intent == FinderIntent.Any ? "Search without a category" : null);
+            chip.Clicked += (_, _) =>
+            {
+                if (_category == intent) return;
+                _category = intent;
+                BuildChips();
+                if (!string.IsNullOrWhiteSpace(QueryEntry.Text)) Search_Clicked(null, EventArgs.Empty);
+            };
+            CategoryChips.Children.Add(chip);
+        }
+        PriceChips.Children.Clear();
+        foreach (var (price, label) in FinderFilters.Prices)
+        {
+            var chip = Chip(label, price == _price);
+            chip.Clicked += (_, _) =>
+            {
+                if (_price == price) return;
+                _price = price;
+                BuildChips();
+                if (_last is not null) Show(_last);
+            };
+            PriceChips.Children.Add(chip);
+        }
+    }
+
+    private static Button Chip(string text, bool selected) => new()
+    {
+        Text = text,
+        Style = (Style)Application.Current!.Resources["SmallButton"],
+        BackgroundColor = selected ? (Color)Application.Current!.Resources["Primary"] : null,
+        TextColor = selected ? Colors.White : null,
+        FontAttributes = selected ? FontAttributes.Bold : FontAttributes.None,
+        Margin = new Thickness(0, 0, 6, 6),
+    };
+
+    /// <summary>Picks a category chip (used by the --find= command-line switch for testing).</summary>
+    public void SetCategory(FinderIntent? category)
+    {
+        _category = category;
+        BuildChips();
     }
 
     /// <summary>Runs a search (used by the --find= command-line switch and the Search button).</summary>
@@ -38,7 +93,7 @@ public partial class FinderPage : ContentPage
         BusyRow.IsVisible = true;
         try
         {
-            var final = await _finder.SearchAsync(text, cts.Token, onUpdate: partial =>
+            var final = await _finder.SearchAsync(text, cts.Token, category: _category, onUpdate: partial =>
                 MainThread.BeginInvokeOnMainThread(() => { if (!cts.IsCancellationRequested) Show(partial); }));
             if (!cts.IsCancellationRequested) Show(final);
         }
@@ -54,16 +109,20 @@ public partial class FinderPage : ContentPage
 
     private void Show(FinderResults r)
     {
+        _last = r;
         BusyRow.IsVisible = !r.IsComplete;
         BusyLabel.Text = r.PendingSources.Count > 0 ? "Still searching " + string.Join(", ", r.PendingSources) + "…" : "";
         ResultsHost.Children.Clear();
 
-        foreach (var notice in r.Notices)
-            ResultsHost.Children.Add(Banner(notice, "#22F59E0B"));
+        if (_price != FinderPrice.Paid)
+            foreach (var notice in r.Notices)
+                ResultsHost.Children.Add(Banner(notice, "#22F59E0B"));
+        if (r.IsComplete && !r.Items.Any(i => _price.Allows(i.Section)))
+            ResultsHost.Children.Add(Banner(_price == FinderPrice.Paid ? "No paid sources found for this." : "Nothing found. Try other words or another category.", "#22F59E0B"));
 
-        AddSection(r, FinderSection.BuyOrRent, "🛒  Buy or rent", "Official stores and platforms", "#2563EB");
-        AddSection(r, FinderSection.FreeLegal, "🆓  Free and legal", "Official free uploads, public-domain and openly licensed works", "#16A34A");
-        AddSection(r, FinderSection.LegalTorrent, "🧲  Legal torrents", "Official torrents of openly licensed and public-domain items", "#7C3AED");
+        AddSection(r, FinderSection.BuyOrRent, "🛒  Buy", "Official stores and platforms", "#2563EB");
+        AddSection(r, FinderSection.FreeLegal, "🆓  Free downloads", "Open-source release files, free games, public-domain and openly licensed files", "#16A34A");
+        AddSection(r, FinderSection.LegalTorrent, "🧲  Official torrents", "Torrents published by the makers themselves", "#7C3AED");
 
         if (r.IsComplete && r.FailedSources.Count > 0)
             ResultsHost.Children.Add(new Label
@@ -75,6 +134,7 @@ public partial class FinderPage : ContentPage
 
     private void AddSection(FinderResults r, FinderSection section, string title, string subtitle, string color)
     {
+        if (!_price.Allows(section)) return;
         var items = r.In(section).ToList();
         if (items.Count == 0) return;
         var stack = new VerticalStackLayout { Spacing = 8 };
@@ -130,7 +190,13 @@ public partial class FinderPage : ContentPage
         grid.Add(text, 1);
 
         var buttons = new VerticalStackLayout { Spacing = 6, VerticalOptions = LayoutOptions.Center };
-        if (item.DownloadUrl is { } dl)
+        if (item.ReleaseFilesUrl is { } release)
+        {
+            var files = new Button { Text = "⬇ Download", Style = (Style)Application.Current!.Resources["PrimaryButton"] };
+            files.Clicked += async (_, _) => await PickReleaseFileAsync(item, release);
+            buttons.Add(files);
+        }
+        else if (item.DownloadUrl is { } dl)
         {
             var download = new Button { Text = "⬇ Download", Style = (Style)Application.Current!.Resources["PrimaryButton"] };
             download.Clicked += async (_, _) => await AppNavigation.OpenAddAsync(dl);
@@ -141,6 +207,27 @@ public partial class FinderPage : ContentPage
         buttons.Add(open);
         grid.Add(buttons, 2);
         return grid;
+    }
+
+    /// <summary>Lists the files of the project's latest release and sends the chosen one to the Add page.</summary>
+    private async Task PickReleaseFileAsync(FinderResult item, string releaseApiUrl)
+    {
+        IReadOnlyList<FinderFile> files;
+        try { files = await GitHubProvider.GetReleaseFilesAsync(_http, releaseApiUrl); }
+        catch (Exception ex)
+        {
+            AppLog.Error("Couldn't list release files", ex);
+            files = [];
+        }
+        if (files.Count == 0)
+        {
+            await OpenAsync(item.Url); // no downloadable files: show the releases page
+            return;
+        }
+        var labels = files.Select(f => $"{f.Name}  ({Format.Bytes(f.Size)})").ToArray();
+        var choice = await DisplayActionSheetAsync($"Download {item.Title}: pick a file", "Cancel", null, labels);
+        var index = Array.IndexOf(labels, choice);
+        if (index >= 0) await AppNavigation.OpenAddAsync(files[index].Url);
     }
 
     private static Border Tag(string text, string color) => new()
