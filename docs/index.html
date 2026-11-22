@@ -207,10 +207,11 @@
       <p class="sub">Three ways in, depending on what you have.</p>
       <div class="grid">
         <div class="card"><h3>A video page link</h3><p>Paste, copy or share a YouTube (or other site) link and pick a quality. The HD video and audio streams are joined into one MP4: by FFmpeg on Windows (installed automatically the first time) and by Android's own media muxer on phones.</p></div>
-        <div class="card"><h3>Age-restricted or private</h3><p>Use <em>Sign in to YouTube</em> once, inside the app. Your password goes only to Google; the session stays on your device and you can sign out any time.</p></div>
+        <div class="card"><h3>Age-restricted or private</h3><p>Sign in once to YouTube, Instagram or Facebook, inside the app. Your password goes only to that site; the session stays on your device and you can sign out any time.</p></div>
+        <div class="card"><h3>Facebook &amp; Instagram</h3><p>Paste a public Facebook video or Instagram reel link. Login-only posts work after you sign in.</p></div>
         <div class="card"><h3>A <code>blob:</code> address</h3><p>A blob link only exists inside the browser tab that made it. Open the page in the Video Grabber, press Play, and download the stream behind it.</p></div>
       </div>
-      <p class="fine" style="margin-top: 20px">Copy-protected (DRM) streams such as Netflix, Prime Video or Disney+ can't be downloaded, and the Grabber tells you when a page uses DRM. Only download content you have the right to download.</p>
+      <p class="fine" style="margin-top: 20px">Copy-protected (DRM) services such as Netflix, Prime Video, JioHotstar or Disney+ can't be downloaded: BDM recognises their links and tells you straight away, and the Grabber tells you when a page uses DRM. Use the official app's offline downloads for those. Only download content you have the right to download.</p>
     </div>
   </section>
 
@@ -242,7 +243,7 @@
         </ul>
         <p>They're separate open-source programs, downloaded from their official GitHub releases into the app's own folder, not bundled.</p></details>
       <details><summary>Why can't I download a blob: link directly?</summary><p>A <code>blob:</code> address is a temporary in-memory handle inside one browser tab, so no outside program can open it. The player behind it loads a normal stream; the Video Grabber catches that stream while the page plays.</p></details>
-      <details><summary>Where is my data stored?</summary><p>In <code>%LOCALAPPDATA%\BDM</code>: the download list, settings, video tools, logs and (if you used it) your YouTube sign-in. Nothing is sent anywhere except the downloads you start.</p></details>
+      <details><summary>Where is my data stored?</summary><p>In <code>%LOCALAPPDATA%\BDM</code>: the download list, settings, video tools, logs and (if you used it) your video-site sign-ins. Nothing is sent anywhere except the downloads you start.</p></details>
       <details><summary>Something went wrong. How do I report it?</summary><p>Open an issue on <a href="https://github.com/mycodeclub/BpstDownloadManager/issues">GitHub</a> and attach the log from <code>%LOCALAPPDATA%\BDM\logs</code>.</p></details>
     </div>
   </section>
@@ -260,7 +261,7 @@ dotnet build src/Bdm.App -f net10.0-android</pre>
         <table>
           <tr><th>Folder</th><th>What's inside</th></tr>
           <tr><td><code>src/Bdm.Core</code></td><td>The engine for every platform: segmented downloads, HLS, torrents, YouTube, queue, Focus mode, speed limits</td></tr>
-          <tr><td><code>src/Bdm.App</code></td><td>The .NET MAUI app (Windows, Android, iOS-ready): pages, Video Grabber, YouTube sign-in, platform services</td></tr>
+          <tr><td><code>src/Bdm.App</code></td><td>The .NET MAUI app (Windows, Android, iOS-ready): pages, Video Grabber, video-site sign-in, platform services</td></tr>
           <tr><td><code>tests/</code></td><td>Unit tests, including downloads against a local test server</td></tr>
           <tr><td><code>installer/</code></td><td>Inno Setup script; <code>build-installer.ps1</code> builds the exe and installer</td></tr>
         </table>

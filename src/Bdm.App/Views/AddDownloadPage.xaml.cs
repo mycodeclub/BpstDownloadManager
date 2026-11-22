@@ -90,6 +90,10 @@ public partial class AddDownloadPage : ContentPage
                 ShowState("blob", "Browser-internal blob: link", BlobHelp, canStart: false);
                 ShowGrabberOffer($"Opens {OriginOfBlob(url) ?? "the site"}. Go to the video, press Play, then tap Download.");
                 return;
+            case UrlKind.Protected:
+                var service = UrlClassifier.ProtectedServiceName(url) ?? "This service";
+                ShowState("protected", $"{service}: DRM-protected video", UrlClassifier.ProtectedMessage(service), canStart: false);
+                return;
             case UrlKind.Torrent:
                 await AnalyzeTorrentAsync(url, ct);
                 return;
@@ -166,6 +170,9 @@ public partial class AddDownloadPage : ContentPage
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch (MediaSignInRequiredException ex)
         {
+            var site = SignInSite.For(url);
+            SignInText.Text = $"This video needs a signed-in {site.Name} account. Sign in once inside BDM; the session stays on this device.";
+            SignInButton.Text = $"Sign in to {site.Name}";
             SignInPanel.IsVisible = true;
             ShowState("video", "Sign-in required", ex.Message, canStart: true);
         }
@@ -285,6 +292,7 @@ public partial class AddDownloadPage : ContentPage
             "torrent" => Color.FromArgb("#7C3AED"),
             "video" or "stream" => Color.FromArgb("#14B8A6"),
             "blob" => Color.FromArgb("#F59E0B"),
+            "protected" => Color.FromArgb("#DC2626"),
             _ => Color.FromArgb("#2563EB"),
         };
         KindLabel.Text = kind.ToUpperInvariant();
@@ -321,7 +329,7 @@ public partial class AddDownloadPage : ContentPage
     }
 
     private async void SignIn_Clicked(object? sender, EventArgs e) =>
-        await Navigation.PushAsync(new SignInPage(_manager, () => Url_TextChanged(null, null!)));
+        await Navigation.PushAsync(new SignInPage(_manager, SignInSite.For(UrlEntry.Text), () => MainThread.BeginInvokeOnMainThread(() => Url_TextChanged(null, null!))));
 
     private async void Grabber_Clicked(object? sender, EventArgs e)
     {

@@ -47,10 +47,22 @@ public partial class App : Application
                 if (route == "add") await AppNavigation.OpenAddAsync("https://www.youtube.com/watch?v=eRsGyueVLvQ");
                 else await Shell.Current.GoToAsync("//" + route);
             }
+            // "BDM.exe --add=<link>": open the Add page with that link (browser hand-off, testing).
+            if (StartupArgs.FirstOrDefault(a => a.StartsWith("--add=", StringComparison.Ordinal)) is { } addArg)
+            {
+                await Task.Delay(500);
+                await AppNavigation.OpenAddAsync(addArg["--add=".Length..].Trim('"'));
+            }
             // "BDM.exe --download=<link>": start downloading right away (scripts, browser hand-off).
             if (StartupArgs.FirstOrDefault(a => a.StartsWith("--download=", StringComparison.Ordinal)) is { } dl)
             {
                 var url = dl["--download=".Length..].Trim('"');
+                if (UrlClassifier.ProtectedServiceName(url) is { } service)
+                {
+                    AppLog.Info("Refused DRM-protected link from command line: " + url);
+                    await AppNavigation.OpenAddAsync(url);
+                    return;
+                }
                 var kind = UrlClassifier.Classify(url) switch
                 {
                     UrlKind.Media => DownloadKind.Media,
@@ -72,7 +84,7 @@ public partial class App : Application
         return window;
     }
 
-    /// <summary>Command-line switches (desktop): --self-test, --page=downloads|grabber|settings|about|add.</summary>
+    /// <summary>Command-line switches (desktop): --self-test, --page=downloads|grabber|settings|about|add, --add=&lt;url&gt;, --download=&lt;url&gt;.</summary>
     public static string[] StartupArgs { get; set; } = [];
 
     /// <summary>Opens every page and the Add dialog; used by the build check to catch runtime UI errors.</summary>

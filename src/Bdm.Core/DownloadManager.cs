@@ -29,9 +29,9 @@ public sealed class DownloadManager : IDisposable
         if (string.IsNullOrWhiteSpace(Settings.DownloadFolder))
             Settings.DownloadFolder = defaultDownloadFolder ?? DefaultDownloadFolder();
         if (Settings.CookiesFile is { } cf && !File.Exists(cf) &&
-            Path.GetFileName(cf).Equals("youtube-cookies.txt", StringComparison.OrdinalIgnoreCase) && File.Exists(YouTubeCookiesPath))
+            Path.GetFileName(cf).Equals("youtube-cookies.txt", StringComparison.OrdinalIgnoreCase) && File.Exists(SignInCookiesPath))
         {
-            Settings.CookiesFile = YouTubeCookiesPath; // data folder was moved by a rename
+            Settings.CookiesFile = SignInCookiesPath; // data folder was moved by a rename
         }
 
         Http = HttpFactory.CreateClient();
@@ -369,10 +369,8 @@ public sealed class DownloadManager : IDisposable
     }
 
     /// <summary>Where the "Sign in to YouTube" page stores the session (app-private folder).</summary>
-    public string YouTubeCookiesPath => Path.Combine(DataDir, "youtube-cookies.txt");
-
-    public bool IsYouTubeSignedIn => File.Exists(YouTubeCookiesPath) &&
-        string.Equals(Settings.CookiesFile, YouTubeCookiesPath, StringComparison.OrdinalIgnoreCase);
+    /// <summary>Sign-in sessions (YouTube, Instagram, Facebook) in one cookies.txt (name kept from 1.x for compatibility).</summary>
+    public string SignInCookiesPath => Path.Combine(DataDir, "youtube-cookies.txt");
 
     private void ApplyMediaSettings()
     {

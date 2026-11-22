@@ -39,7 +39,9 @@ A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.
 - **Speed limit.** Set an overall limit, so downloads don't take the whole connection while you work.
 - **Built for long downloads.** Per-part resume, automatic retries with backoff, a check that the server's file hasn't changed, keep-awake on Windows, and a foreground service with wake/Wi-Fi locks on Android.
 - **Catches links.** Clipboard capture on Windows, "Share → BDM" on Android, magnet/.torrent file associations, `BDM.exe <link>`.
-- **YouTube sign-in** for age-restricted, private and members-only videos. You sign in inside BDM, and the session stays on your device.
+- **Facebook and Instagram videos and reels**. Public posts work straight away.
+- **Sign-in for YouTube, Instagram and Facebook** (Settings → Video) for age-restricted, private, members-only and login-only videos. You sign in on the site's own page inside BDM, and the session stays on your device.
+- **Clear answers for paid streaming services.** Netflix, Prime Video, JioHotstar, Disney+, SonyLIV, ZEE5 and similar links are recognised up front: BDM explains that they are DRM-protected and points you to the service's own offline downloads, instead of failing halfway.
 - **Light and dark themes,** a desktop sidebar and phone navigation, all from one codebase.
 
 ## Install
@@ -84,7 +86,7 @@ See [ROADMAP.md](ROADMAP.md): what's still missing in today's download managers,
 
 ## Responsible use
 
-Only download content you have the right to download. Respect copyright and each site's terms. DRM-protected streams (Netflix, Prime Video, Disney+…) are not supported and won't be. BDM uses MonoTorrent (MIT), YoutubeExplode (LGPL-3.0) and, on Windows, the separate programs yt-dlp, FFmpeg and Deno under their own licenses.
+Only download content you have the right to download. Respect copyright and each site's terms. DRM-protected streams (Netflix, Prime Video, JioHotstar, Disney+…) are not supported and won't be: circumventing DRM is illegal in most countries (for example under India's Copyright Act s.65A and the US DMCA). BDM uses MonoTorrent (MIT), YoutubeExplode (LGPL-3.0) and, on Windows, the separate programs yt-dlp, FFmpeg and Deno under their own licenses.
 
 ## License
 

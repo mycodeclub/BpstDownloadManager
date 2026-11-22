@@ -29,8 +29,8 @@
 
             <Border x:Name="SignInPanel" Style="{StaticResource Banner}" BackgroundColor="#222563EB" IsVisible="False">
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                    <Label Text="This video needs a signed-in YouTube account. Sign in once inside BDM; the session stays on this device." LineBreakMode="WordWrap" VerticalOptions="Center" />
-                    <Button Grid.Column="1" Text="Sign in to YouTube" Clicked="SignIn_Clicked" Style="{StaticResource PrimaryButton}" />
+                    <Label x:Name="SignInText" Text="This video needs a signed-in account. Sign in once inside BDM; the session stays on this device." LineBreakMode="WordWrap" VerticalOptions="Center" />
+                    <Button x:Name="SignInButton" Grid.Column="1" Text="Sign in" Clicked="SignIn_Clicked" Style="{StaticResource PrimaryButton}" />
                 </Grid>
             </Border>
 

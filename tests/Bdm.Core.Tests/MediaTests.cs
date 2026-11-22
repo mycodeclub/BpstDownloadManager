@@ -29,4 +29,22 @@ public class MediaTests
         var ex = new MediaDownloader(new MediaTools(Path.GetTempPath())).Translate(ytDlpError);
         Assert.Equal(needsSignIn, ex is MediaSignInRequiredException);
     }
+
+    [Theory]
+    [InlineData("[Instagram] CWqAgUZgCku: Requested content is not available, rate-limit reached or login required. Use --cookies", "Instagram")]
+    [InlineData("[facebook] 123: Cannot parse data; login required. Use --cookies", "Facebook")]
+    public void Social_sign_in_errors_name_the_site(string ytDlpError, string site)
+    {
+        var ex = new MediaDownloader(new MediaTools(Path.GetTempPath())).Translate(ytDlpError);
+        Assert.IsType<MediaSignInRequiredException>(ex);
+        Assert.Contains(site, ex.Message);
+    }
+
+    [Fact]
+    public void Hotstar_login_error_explains_drm()
+    {
+        var ex = new MediaDownloader(new MediaTools(Path.GetTempPath())).Translate("[hotstar] 1000087: This video is only available for registered users. Use --cookies");
+        Assert.IsNotType<MediaSignInRequiredException>(ex);
+        Assert.Contains("DRM", ex.Message);
+    }
 }

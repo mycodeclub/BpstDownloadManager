@@ -63,9 +63,21 @@ public partial class SettingsPage : ContentPage
 
     private void UpdateSignIn()
     {
-        bool signedIn = _manager.IsYouTubeSignedIn;
-        SignInStatus.Text = signedIn ? "Signed in to YouTube in BDM." : "Not signed in.";
-        SignOutButton.IsEnabled = signedIn;
+        SignInRows.Children.Clear();
+        foreach (var site in SignInSite.All)
+        {
+            bool signedIn = SignInPage.IsSignedIn(_manager, site);
+            var row = new Grid { ColumnDefinitions = [new(GridLength.Star), new(GridLength.Auto), new(GridLength.Auto)], ColumnSpacing = 8 };
+            row.Add(new Label { Text = $"{site.Name}: " + (signedIn ? "signed in" : "not signed in"), VerticalOptions = LayoutOptions.Center });
+            var signIn = new Button { Text = signedIn ? "Sign in again…" : "Sign in…", Style = (Style)Application.Current!.Resources["QuietButton"] };
+            signIn.Clicked += async (_, _) =>
+                await Navigation.PushAsync(new SignInPage(_manager, site, () => MainThread.BeginInvokeOnMainThread(UpdateSignIn)));
+            var signOut = new Button { Text = "Sign out", IsEnabled = signedIn, Style = (Style)Application.Current!.Resources["QuietButton"] };
+            signOut.Clicked += (_, _) => { SignInPage.SignOut(_manager, site); UpdateSignIn(); };
+            row.Add(signIn, 1);
+            row.Add(signOut, 2);
+            SignInRows.Children.Add(row);
+        }
     }
 
     private void UpdateTools()
@@ -115,15 +127,6 @@ public partial class SettingsPage : ContentPage
     {
         var folder = await _platform.PickFolderAsync(FolderEntry.Text);
         if (folder is not null) FolderEntry.Text = folder;
-    }
-
-    private async void SignIn_Clicked(object? sender, EventArgs e) =>
-        await Navigation.PushAsync(new SignInPage(_manager, () => MainThread.BeginInvokeOnMainThread(UpdateSignIn)));
-
-    private void SignOut_Clicked(object? sender, EventArgs e)
-    {
-        SignInPage.SignOut(_manager);
-        UpdateSignIn();
     }
 
     private async Task RunToolAsync(Func<HttpClient, IProgress<string>, CancellationToken, Task> action)

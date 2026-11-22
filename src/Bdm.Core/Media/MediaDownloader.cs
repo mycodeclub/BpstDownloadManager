@@ -201,7 +201,7 @@ public sealed class MediaDownloader : IMediaBackend
         if (error.Contains("Failed to decrypt with DPAPI", StringComparison.OrdinalIgnoreCase) ||
             error.Contains("app-bound", StringComparison.OrdinalIgnoreCase))
             return new MediaSignInRequiredException(
-                "Chrome and Edge lock their cookies so other apps can't read them. Use Settings → \"Sign in to YouTube\" in BpstVideoDownloader instead.");
+                "Chrome and Edge lock their cookies so other apps can't read them. Use the sign-in buttons in BDM's Settings instead.");
 
         if (error.Contains("Could not copy", StringComparison.OrdinalIgnoreCase) && error.Contains("cookie", StringComparison.OrdinalIgnoreCase))
             return new MediaSignInRequiredException(
@@ -215,7 +215,7 @@ public sealed class MediaDownloader : IMediaBackend
 
         if (error.Contains("not a bot", StringComparison.OrdinalIgnoreCase))
             return new MediaSignInRequiredException(
-                "YouTube is asking to confirm you're not a bot. Sign in to YouTube in BpstVideoDownloader (Settings), then Resume.");
+                "YouTube is asking to confirm you're not a bot. Sign in to YouTube in BDM (Settings), then Resume.");
 
         if (error.Contains("Private video", StringComparison.OrdinalIgnoreCase) ||
             error.Contains("members-only", StringComparison.OrdinalIgnoreCase) ||
@@ -224,10 +224,23 @@ public sealed class MediaDownloader : IMediaBackend
                 "This video is private or for channel members only. Sign in to YouTube (Settings) with an account that has access.");
 
         if (error.Contains("DRM", StringComparison.Ordinal))
-            return new InvalidOperationException("This video is DRM-protected (copy-protected), so it can't be downloaded.");
+            return new InvalidOperationException("This video is DRM-protected (copy-protected), so it can't be downloaded. Use the service's own app for offline viewing.");
 
-        if (error.Contains("--cookies", StringComparison.Ordinal))
-            return new MediaSignInRequiredException("This site needs you to be signed in. Use Settings → sign-in options, then Resume.");
+        // yt-dlp prefixes errors with the site, e.g. "[Instagram] ID: ...".
+        bool needsLogin = error.Contains("--cookies", StringComparison.Ordinal) || error.Contains("login required", StringComparison.OrdinalIgnoreCase) ||
+                          error.Contains("empty media response", StringComparison.OrdinalIgnoreCase) || error.Contains("registered users", StringComparison.OrdinalIgnoreCase);
+        if (needsLogin)
+        {
+            if (error.Contains("[Instagram]", StringComparison.OrdinalIgnoreCase))
+                return new MediaSignInRequiredException(signedIn
+                    ? "Instagram didn't share this post with the signed-in account (private account you don't follow, or the sign-in expired). Sign in to Instagram again in Settings."
+                    : "Instagram only shows this post to signed-in users. Use Settings → Sign in to Instagram once, then Resume.");
+            if (error.Contains("[facebook]", StringComparison.OrdinalIgnoreCase))
+                return new MediaSignInRequiredException("Facebook only shows this video to signed-in users (or it's private). Use Settings → Sign in to Facebook once, then Resume.");
+            if (error.Contains("[hotstar]", StringComparison.OrdinalIgnoreCase))
+                return new InvalidOperationException(UrlClassifier.ProtectedMessage("JioHotstar"));
+            return new MediaSignInRequiredException("This site needs you to be signed in. Use the sign-in options in Settings, then Resume.");
+        }
 
         return new InvalidOperationException(error);
     }

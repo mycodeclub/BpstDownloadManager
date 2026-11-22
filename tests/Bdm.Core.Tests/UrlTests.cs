@@ -33,4 +33,31 @@ public class UrlTests
     [Fact]
     public void Url_file_name_is_decoded()
         => Assert.Equal("my file.zip", FileNameHelper.FromUrl(new Uri("https://x.com/dl/my%20file.zip?x=1")));
+
+    [Theory]
+    [InlineData("https://www.netflix.com/watch/81234567", "Netflix")]
+    [InlineData("https://www.primevideo.com/detail/0ABC", "Prime Video")]
+    [InlineData("https://www.amazon.in/gp/video/detail/B0XYZ", "Prime Video")]
+    [InlineData("https://www.hotstar.com/in/movies/x/123", "JioHotstar")]
+    [InlineData("https://www.jiohotstar.com/shows/x/1", "JioHotstar")]
+    [InlineData("https://www.disneyplus.com/video/abc", "Disney+")]
+    [InlineData("https://www.sonyliv.com/shows/x", "SonyLIV")]
+    [InlineData("https://www.amazon.in/dp/B0XYZ", null)]
+    [InlineData("https://www.youtube.com/watch?v=x", null)]
+    [InlineData("https://www.instagram.com/reel/abc/", null)]
+    public void Detects_drm_streaming_services(string url, string? service)
+    {
+        Assert.Equal(service, UrlClassifier.ProtectedServiceName(url));
+        Assert.Equal(service is not null, UrlClassifier.Classify(url) == UrlKind.Protected);
+    }
+
+    [Fact]
+    public void Drm_links_are_not_caught_from_the_clipboard()
+        => Assert.False(UrlClassifier.IsCatchable("https://www.netflix.com/watch/81234567"));
+
+    [Theory]
+    [InlineData("https://www.facebook.com/watch/?v=123")]
+    [InlineData("https://fb.watch/abc/")]
+    [InlineData("https://www.instagram.com/reel/abc/")]
+    public void Social_video_links_are_media(string url) => Assert.Equal(UrlKind.Media, UrlClassifier.Classify(url));
 }

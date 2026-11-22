@@ -81,12 +81,10 @@
                     <Label Text="Video" Style="{StaticResource SectionTitle}" />
                     <Label Text="Default quality" FontAttributes="Bold" />
                     <Picker x:Name="QualityPicker" ItemDisplayBinding="{Binding Label}" />
-                    <Label Text="YouTube sign-in (age-restricted, private, members-only videos)" FontAttributes="Bold" />
-                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
-                        <Label x:Name="SignInStatus" VerticalOptions="Center" />
-                        <Button Grid.Column="1" Text="Sign in…" Clicked="SignIn_Clicked" Style="{StaticResource QuietButton}" />
-                        <Button x:Name="SignOutButton" Grid.Column="2" Text="Sign out" Clicked="SignOut_Clicked" Style="{StaticResource QuietButton}" />
-                    </Grid>
+                    <Label Text="Sign-ins (age-restricted, private and login-only videos)" FontAttributes="Bold" />
+                    <Label Style="{StaticResource Muted}" FontSize="12" LineBreakMode="WordWrap"
+                           Text="You sign in on the site's own page; BDM keeps only the session on this device. Paid streaming services (Netflix, Prime Video, JioHotstar…) are DRM-protected and can't be downloaded even when signed in." />
+                    <VerticalStackLayout x:Name="SignInRows" Spacing="6" />
                 </VerticalStackLayout>
             </Border>
 
