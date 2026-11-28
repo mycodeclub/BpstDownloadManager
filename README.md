@@ -67,6 +67,19 @@ See [CHANGELOG.md](CHANGELOG.md) for what changed in each version.
 
 Builds are not code-signed yet. On Windows, SmartScreen may say "Windows protected your PC": click **More info → Run anyway**. Each release lists SHA-256 checksums.
 
+## All versions
+
+Every release stays on GitHub, so you can always get the latest or go back to an earlier one. The links below always point to that exact version; [releases/latest](https://github.com/mycodeclub/BpstDownloadManager/releases/latest) is always the newest.
+
+| Version | Date | Windows | Android | Notes |
+|---|---|---|---|---|
+| [2.1.1](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.1.1) | 2026-11-28 | [BDM-Setup-2.1.1.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.1/BDM-Setup-2.1.1.exe) | [BDM-2.1.1-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.1/BDM-2.1.1-android.apk) | **Latest.** Setup updates an installed BDM in place |
+| [2.1.0](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.1.0) | 2026-11-22 | [BDM-Setup-2.1.0.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.0/BDM-Setup-2.1.0.exe) | [BDM-2.1.0-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.0/BDM-2.1.0-android.apk) | Smart Finder, Facebook/Instagram sign-in |
+| [2.0.0](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.0.0) | 2026-11-21 | [BDM-Setup-2.0.0.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.0.0/BDM-Setup-2.0.0.exe) | [BDM-2.0.0-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.0.0/BDM-2.0.0-android.apk) | New Windows + Android app (dev-signed APK, see Updating) |
+| [0.1.0](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v0.1.0) | 2026-11-20 | [BpstVideoDownloader-Setup-0.1.0.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v0.1.0/BpstVideoDownloader-Setup-0.1.0.exe) | – | First release (WPF, Windows only) |
+
+To install an older version over a newer one on Windows, Setup asks first. On Android, uninstall the newer version first (Android never installs an older version over a newer one).
+
 ## Build
 
 Requirements: Windows 10/11, the [.NET 10 SDK](https://dotnet.microsoft.com/download) with the MAUI workloads (`dotnet workload install maui-windows maui-android`), the Android SDK and a JDK 17+ (both come with Visual Studio's ".NET MAUI" workload).
@@ -82,7 +95,7 @@ dotnet build src/Bdm.App -f net10.0-android                  # Android
 
 ### Releasing an update
 
-1. Bump the version: `ApplicationDisplayVersion` / `ApplicationVersion` in `src/Bdm.App/Bdm.App.csproj`, `Version` in `Directory.Build.props`, `AppVersion` in `installer/BDM.iss`, the default in `build-installer.ps1` and `.github/workflows/build.yml`, and add the release to `CHANGELOG.md`.
+1. Bump the version: `ApplicationDisplayVersion` / `ApplicationVersion` in `src/Bdm.App/Bdm.App.csproj`, `Version` in `Directory.Build.props`, `AppVersion` in `installer/BDM.iss`, the default in `build-installer.ps1` and `.github/workflows/build.yml`, add the release to `CHANGELOG.md`, and add its row to **All versions** in this README and on the website (`docs/index.html`).
 2. `.\build-installer.ps1 -Version x.y.z`. It derives the Android version code from the version (`2.1.0 → 20100`, `2.2.0 → 20200`), so every APK can update the one before.
 3. Tag and push (`git tag vx.y.z && git push origin main vx.y.z`). CI builds, signs and attaches both installers to the GitHub Release; the `releases/latest/download/...` links then serve the update.
 
