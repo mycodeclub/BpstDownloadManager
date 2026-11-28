@@ -25,6 +25,7 @@
 - Facebook and Instagram sign-in; clear DRM messages for OTT links
 
 ### 2.2
+- In-app "new version available" check (GitHub Releases) with one-click download of the update
 - Smart Finder deep web search (optional search-API key), with the same piracy filters
 - Browser extension (Chromium + Firefox): send links, catch downloads and detected video streams to BDM (native messaging / localhost bridge)
 - Checksum verification (SHA-256/SHA-1/MD5) on completion

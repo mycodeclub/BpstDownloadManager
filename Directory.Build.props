@@ -2,12 +2,12 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.1.0</Version>
-    <Product>BpstVideoDownloader</Product>
+    <Version>2.1.0</Version>
+    <Product>BPST Download Manager (BDM)</Product>
     <Company>BitProSoftTech</Company>
     <Authors>BitProSoftTech</Authors>
-    <Description>BpstVideoDownloader - free open-source download manager for Windows, a product of BitProSoftTech (bitprosofttech.com).</Description>
-    <Copyright>Copyright (c) 2026 BitProSoftTech and BpstVideoDownloader contributors</Copyright>
+    <Description>BDM (BPST Download Manager) - free open-source download manager for Windows and Android, a product of BitProSoftTech (bitprosofttech.com).</Description>
+    <Copyright>Copyright (c) 2026 BitProSoftTech and BDM contributors</Copyright>
     <PackageProjectUrl>https://bitprosofttech.com</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
