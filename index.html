@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BDM – free open-source download manager for Windows and Android</title>
+<meta name="description" content="BDM by BitProSoftTech: free, open-source Windows download manager with multi-connection downloads, resume, clipboard capture, YouTube and streaming video (HLS/DASH, blob: players).">
+<meta property="og:title" content="BDM – free open-source download manager">
+<meta property="og:description" content="Multi-connection downloads, resume, clipboard capture, YouTube and streaming video. A product of BitProSoftTech.">
+<meta property="og:image" content="assets/screenshot-main.png">
+<link rel="icon" href="assets/icon-256.png">
+<link rel="canonical" href="https://mycodeclub.github.io/BpstDownloadManager/">
+<meta property="og:url" content="https://mycodeclub.github.io/BpstDownloadManager/">
+<style>
+  :root {
+    --bg: #f6f8fb; --surface: #ffffff; --surface-2: #eef2f7; --text: #0f172a; --muted: #52607a;
+    --border: #dbe2ec; --accent: #2563eb; --accent-2: #14b8a6; --accent-text: #ffffff; --code: #0b1220; --code-text: #e2e8f0;
+    --shadow: 0 10px 30px rgba(15, 23, 42, .10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1120; --surface: #111a2e; --surface-2: #17223a; --text: #e6edf7; --muted: #9aa8bf;
+      --border: #24324d; --accent: #4f8bff; --accent-2: #2dd4bf; --code: #060b16; --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1120; --surface: #111a2e; --surface-2: #17223a; --text: #e6edf7; --muted: #9aa8bf;
+    --border: #24324d; --accent: #4f8bff; --accent-2: #2dd4bf; --code: #060b16; --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+  header.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+  header.top .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text); text-decoration: none; }
+  .brand img { width: 28px; height: 28px; }
+  nav { margin-left: auto; display: flex; gap: 18px; }
+  nav a { color: var(--muted); text-decoration: none; font-size: 15px; }
+  nav a:hover { color: var(--text); }
+  @media (max-width: 760px) { nav { display: none; } }
+
+  .hero { padding: 56px 0 32px; text-align: center; }
+  .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; background: var(--surface-2); color: var(--muted); font-size: 14px; border: 1px solid var(--border); }
+  h1 { font-size: clamp(32px, 6vw, 54px); line-height: 1.1; margin: 18px 0 12px; letter-spacing: -.02em; }
+  h1 .grad { background: linear-gradient(90deg, var(--accent-2), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { color: var(--muted); font-size: clamp(17px, 2.4vw, 20px); max-width: 720px; margin: 0 auto 26px; }
+  .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font-weight: 600; text-decoration: none; border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  .btn:hover { filter: brightness(1.06); }
+  .fine { color: var(--muted); font-size: 14px; margin-top: 12px; }
+  .shot { margin: 40px auto 0; max-width: 1000px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); background: var(--surface); }
+  .shot img { display: block; width: 100%; height: auto; }
+
+  section { padding: 56px 0; }
+  section h2 { font-size: clamp(24px, 3.6vw, 34px); margin: 0 0 8px; letter-spacing: -.01em; }
+  section .sub { color: var(--muted); margin: 0 0 28px; max-width: 760px; }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card h3 { margin: 6px 0 6px; font-size: 18px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .icon { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--surface-2); color: var(--accent); }
+  .icon svg { width: 22px; height: 22px; }
+
+  .how { display: grid; gap: 24px; grid-template-columns: 1fr 1fr; align-items: center; }
+  @media (max-width: 860px) { .how { grid-template-columns: 1fr; } }
+  .segbar { display: flex; height: 22px; border-radius: 6px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--border); }
+  .seg { position: relative; border-right: 1px solid var(--bg); }
+  .seg::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--p); background: var(--accent-2); animation: fill 4s ease-in-out infinite alternate; }
+  .seg.active::before { background: var(--accent); }
+  @keyframes fill { from { width: calc(var(--p) * .35); } to { width: var(--p); } }
+  @media (prefers-reduced-motion: reduce) { .seg::before { animation: none; } }
+  .legend { display: flex; gap: 16px; font-size: 14px; color: var(--muted); margin-top: 10px; flex-wrap: wrap; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  ol.steps { margin: 0; padding-left: 20px; }
+  ol.steps li { margin: 6px 0; }
+
+  pre { background: var(--code); color: var(--code-text); padding: 16px; border-radius: 10px; overflow-x: auto; font: 14px/1.5 Consolas, "Cascadia Code", monospace; }
+  code { font-family: Consolas, "Cascadia Code", monospace; font-size: .92em; }
+  :not(pre) > code { background: var(--surface-2); padding: 1px 6px; border-radius: 5px; }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 15px; }
+  th { background: var(--surface-2); }
+  tr:last-child td { border-bottom: 0; }
+  .table-wrap { overflow-x: auto; }
+  td code { word-break: break-all; }
+
+  details { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin: 10px 0; }
+  summary { cursor: pointer; font-weight: 600; }
+  details p, details ul { color: var(--muted); margin: 10px 0 0; }
+
+  .company { display: grid; gap: 20px; grid-template-columns: auto 1fr; align-items: center; background: linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 14%, var(--surface)), color-mix(in srgb, var(--accent) 14%, var(--surface))); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+  .company img { width: 72px; height: 72px; }
+  @media (max-width: 600px) { .company { grid-template-columns: 1fr; text-align: center; } .company img { margin: 0 auto; } }
+  footer { border-top: 1px solid var(--border); padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="assets/icon-256.png" alt="">BDM</a>
+    <nav aria-label="Sections">
+      <a href="#features">Features</a>
+      <a href="#video">Video</a>
+      <a href="#install">Install</a>
+      <a href="#faq">FAQ</a>
+      <a href="#build">Build</a>
+      <a href="https://github.com/mycodeclub/BpstDownloadManager">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <span class="badge">BDM 2.2 · Free &amp; open source · Windows &amp; Android</span>
+    <h1>Download anything,<br><span class="grad">at full speed.</span></h1>
+    <p class="lead">Files, games, ISOs, YouTube in HD, streaming (<code>blob:</code>) videos and torrents, in one app on your PC and your phone. Up to 32 connections per file, resume after anything, and ⚡ Focus to give one download your whole connection.</p>
+    <div class="cta">
+      <a class="btn primary" href="download/windows/">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>
+        Download for Windows
+      </a>
+      <a class="btn" href="download/android/">Android APK</a>
+      <a class="btn" href="https://github.com/mycodeclub/BpstDownloadManager">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"/></svg>
+        Source code
+      </a>
+    </div>
+    <p class="fine">A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.com">bitprosofttech.com</a> · +(91)-82-9910-1616</p>
+    <figure class="shot">
+      <img src="assets/screenshot-main.png" width="1180" height="660" alt="BDM main window with a list of downloads, progress bars, categories and the BitProSoftTech credit in the corner">
+    </figure>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <h2>Everything a download manager should do</h2>
+      <p class="sub">Built from scratch in C# on .NET 10 and .NET MAUI, with no ads, no bundled offers and no tracking.</p>
+      <div class="grid">
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+          <h3>Multi-connection downloads</h3><p>Each file is split into byte ranges fetched in parallel over 1–32 connections, often several times faster than a browser.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg></div>
+          <h3>Dynamic segmentation</h3><p>When a connection finishes early it takes over half of the largest remaining part, so every connection stays busy to the end.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 9v6m4-6v6"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <h3>Pause &amp; resume</h3><p>Progress of every part is saved. Downloads continue after pausing, closing the app, a crash or a reboot. Retries back off automatically.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M8 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/></svg></div>
+          <h3>Clipboard capture</h3><p>Copy a file or video link in any app and the download dialog pops up. You can also drag links onto the window or press Ctrl+V.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-3v10l-5-3"/></svg></div>
+          <h3>YouTube in HD &amp; 1000+ sites</h3><p>Separate HD video and audio streams are downloaded in parallel and merged into one MP4. Choose Best, MP4, 4K to 360p, or audio only. Works on Android too.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v6a6 6 0 0 0 12 0V3"/><path d="M6 3h4M14 3h4M6 7h4M14 7h4"/></svg></div>
+          <h3>Torrents</h3><p>Magnet links and .torrent files: pick the files you want, DHT, peer exchange, automatic router port opening, fast resume and a seeding ratio.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg></div>
+          <h3>⚡ Focus mode</h3><p>Need one file now? Focus gives it the whole connection; the others slow to a trickle but keep their place, and go back to normal when it's done.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+          <h3>Android app</h3><p>The same engine on your phone: runs in the background with a progress notification, "Share → BDM" from Chrome or YouTube, and files land in Download/BDM.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+          <h3>Video Grabber</h3><p>For <code>blob:</code> players and unsupported sites: open the page, press Play, and download the real HLS, DASH or MP4 stream it detects.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h10M4 17h7"/></svg></div>
+          <h3>Queue &amp; categories</h3><p>Choose how many downloads run at once. Files are sorted into Video, Music, Documents, Compressed, Programs and Images.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg></div>
+          <h3>Built for long downloads</h3><p>Automatic retries when the network drops, a check that the server's file didn't change, keep-awake while downloading, and a speed limit if you need it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--surface-2); border-block: 1px solid var(--border);">
+    <div class="wrap how">
+      <div>
+        <h2>How the speed-up works</h2>
+        <p class="sub">Servers often limit the speed of a single connection. BDM asks for different parts of the file at the same time and writes each part straight into its place on disk.</p>
+        <ol class="steps">
+          <li>It checks the file size and whether the server allows byte-range requests.</li>
+          <li>It splits the file into parts, one per connection.</li>
+          <li>When a part finishes, that connection splits the largest remaining part and helps with it.</li>
+          <li>Progress is saved every few seconds, so nothing is lost if you stop.</li>
+        </ol>
+      </div>
+      <div class="card" aria-label="Illustration of eight connections downloading parts of one file">
+        <strong>One file, 8 connections</strong>
+        <div class="segbar" style="margin-top: 14px">
+          <div class="seg" style="flex: 1; --p: 100%"></div>
+          <div class="seg active" style="flex: 1; --p: 92%"></div>
+          <div class="seg active" style="flex: 1; --p: 81%"></div>
+          <div class="seg active" style="flex: 1; --p: 77%"></div>
+          <div class="seg active" style="flex: 1; --p: 69%"></div>
+          <div class="seg active" style="flex: 1; --p: 58%"></div>
+          <div class="seg active" style="flex: 1; --p: 44%"></div>
+          <div class="seg active" style="flex: 1; --p: 31%"></div>
+        </div>
+        <div class="legend">
+          <span><span class="dot" style="background: var(--accent-2)"></span>finished part</span>
+          <span><span class="dot" style="background: var(--accent)"></span>downloading</span>
+          <span><span class="dot" style="background: var(--surface-2); border: 1px solid var(--border)"></span>still to fetch</span>
+        </div>
+        <p class="fine" style="text-align: left">The app shows this live segment map for the selected download.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="video">
+    <div class="wrap">
+      <h2>Video downloads</h2>
+      <p class="sub">Three ways in, depending on what you have.</p>
+      <div class="grid">
+        <div class="card"><h3>A video page link</h3><p>Paste, copy or share a YouTube (or other site) link and pick a quality. The HD video and audio streams are joined into one MP4: by FFmpeg on Windows (installed automatically the first time) and by Android's own media muxer on phones.</p></div>
+        <div class="card"><h3>Age-restricted or private</h3><p>Sign in once to YouTube, Instagram or Facebook, inside the app. Your password goes only to that site; the session stays on your device and you can sign out any time.</p></div>
+        <div class="card"><h3>✨ Smart Finder</h3><p>Search for a game, software, e-book, PDF, document, course, movie or web series and filter by category, language or Free / Paid. See where to buy it, which streaming services in your country have a movie or series (Netflix, Prime Video, JioHotstar, ZEE5, SonyLIV…), free legal downloads (open-source installers, free games, public-domain books and films, research papers) and official torrents, then download with one click. Cracks and piracy sites are never shown.</p></div>
+        <div class="card"><h3>Facebook &amp; Instagram</h3><p>Paste a public Facebook video or Instagram reel link. Login-only posts work after you sign in.</p></div>
+        <div class="card"><h3>A <code>blob:</code> address</h3><p>A blob link only exists inside the browser tab that made it. Open the page in the Video Grabber, press Play, and download the stream behind it.</p></div>
+      </div>
+      <p class="fine" style="margin-top: 20px">Copy-protected (DRM) services such as Netflix, Prime Video, JioHotstar or Disney+ can't be downloaded: BDM recognises their links and tells you straight away, and the Grabber tells you when a page uses DRM. Use the official app's offline downloads for those. Only download content you have the right to download.</p>
+    </div>
+  </section>
+
+  <section id="install" style="background: var(--surface-2); border-block: 1px solid var(--border);">
+    <div class="wrap">
+      <h2>Install</h2>
+      <p class="sub">No administrator rights needed. .NET is built in, so nothing else has to be installed first.</p>
+      <div class="grid">
+        <div class="card"><h3>Windows 10 / 11</h3>
+          <p><a href="download/windows/">BDM-Setup.exe</a> adds a Start menu shortcut and an uninstaller, can open magnet links and .torrent files, and updates an installed BDM in place: just run the new Setup, your downloads and settings are kept.</p></div>
+        <div class="card"><h3>Android 8+</h3>
+          <p><a href="download/android/">BDM-android.apk</a>: open it on your phone and allow “Install unknown apps” for your browser. Files are saved to Download/BDM. To update, open the newer APK and tap Update. (Coming from 2.0.0? Uninstall it once first.)</p></div>
+        <div class="card"><h3>Security warnings</h3>
+          <p>Builds aren't code-signed yet. On Windows, SmartScreen may warn: click <strong>More info → Run anyway</strong>. PCs with Smart App Control turned on block unsigned apps.</p></div>
+      </div>
+      <h3 style="margin-top: 28px">All versions</h3>
+      <p class="fine">Every release stays available. <a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest">Latest release</a> · <a href="https://github.com/mycodeclub/BpstDownloadManager/releases">all releases with notes and checksums</a></p>
+      <table style="width:100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95em">
+        <thead><tr style="text-align:left; border-bottom: 1px solid var(--border)"><th style="padding:6px">Version</th><th style="padding:6px">Date</th><th style="padding:6px">Windows</th><th style="padding:6px">Android</th><th style="padding:6px">Notes</th></tr></thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border)"><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.2.0">2.2.0</a></td><td style="padding:6px">2026-11-28</td><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.2.0/BDM-Setup-2.2.0.exe">Setup .exe</a></td><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.2.0/BDM-2.2.0-android.apk">.apk</a></td><td style="padding:6px"><strong>Latest.</strong> Movies &amp; web series in Smart Finder, by language; Setup updates BDM in place</td></tr>
+          <tr style="border-bottom: 1px solid var(--border)"><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.1.0">2.1.0</a></td><td style="padding:6px">2026-11-22</td><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.0/BDM-Setup-2.1.0.exe">Setup .exe</a></td><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.0/BDM-2.1.0-android.apk">.apk</a></td><td style="padding:6px">Smart Finder, Facebook/Instagram sign-in</td></tr>
+          <tr style="border-bottom: 1px solid var(--border)"><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.0.0">2.0.0</a></td><td style="padding:6px">2026-11-21</td><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.0.0/BDM-Setup-2.0.0.exe">Setup .exe</a></td><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.0.0/BDM-2.0.0-android.apk">.apk</a></td><td style="padding:6px">New Windows + Android app (dev-signed APK, see Updating)</td></tr>
+          <tr><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v0.1.0">0.1.0</a></td><td style="padding:6px">2026-11-20</td><td style="padding:6px"><a href="https://github.com/mycodeclub/BpstDownloadManager/releases/download/v0.1.0/BpstVideoDownloader-Setup-0.1.0.exe">Setup .exe</a></td><td style="padding:6px">–</td><td style="padding:6px">First release (Windows only)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <h2>Questions</h2>
+      <details><summary>Is it really free?</summary><p>Yes. BDM is free and open source under the MIT License: no ads, no bundled software, no telemetry. You can read, change and share the code.</p></details>
+      <details><summary>Why does it need yt-dlp, FFmpeg and Deno?</summary>
+        <ul>
+          <li><strong>yt-dlp</strong> finds the real video behind a YouTube or site page. Sites change often; yt-dlp is updated just as often, and the app updates it daily.</li>
+          <li><strong>FFmpeg</strong> joins the separate HD video and audio streams into one file and converts audio to MP3.</li>
+          <li><strong>Deno</strong> (or an installed Node.js) runs the JavaScript YouTube now requires.</li>
+        </ul>
+        <p>They're separate open-source programs, downloaded from their official GitHub releases into the app's own folder, not bundled.</p></details>
+      <details><summary>Why can't I download a blob: link directly?</summary><p>A <code>blob:</code> address is a temporary in-memory handle inside one browser tab, so no outside program can open it. The player behind it loads a normal stream; the Video Grabber catches that stream while the page plays.</p></details>
+      <details><summary>Where is my data stored?</summary><p>In <code>%LOCALAPPDATA%\BDM</code>: the download list, settings, video tools, logs and (if you used it) your video-site sign-ins. Nothing is sent anywhere except the downloads you start.</p></details>
+      <details><summary>Something went wrong. How do I report it?</summary><p>Open an issue on <a href="https://github.com/mycodeclub/BpstDownloadManager/issues">GitHub</a> and attach the log from <code>%LOCALAPPDATA%\BDM\logs</code>.</p></details>
+    </div>
+  </section>
+
+  <section id="build" style="background: var(--surface-2); border-block: 1px solid var(--border);">
+    <div class="wrap">
+      <h2>Build from source</h2>
+      <p class="sub">Requires Windows 10/11, the .NET 10 SDK with the MAUI workloads, and (for Android) the Android SDK and a JDK, all included in Visual Studio's .NET MAUI workload. Contributions are welcome.</p>
+<pre>git clone https://github.com/mycodeclub/BpstDownloadManager.git
+cd BpstDownloadManager
+dotnet test tests/Bdm.Core.Tests
+dotnet build src/Bdm.App -f net10.0-windows10.0.19041.0
+dotnet build src/Bdm.App -f net10.0-android</pre>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Folder</th><th>What's inside</th></tr>
+          <tr><td><code>src/Bdm.Core</code></td><td>The engine for every platform: segmented downloads, HLS, torrents, YouTube, queue, Focus mode, speed limits</td></tr>
+          <tr><td><code>src/Bdm.App</code></td><td>The .NET MAUI app (Windows, Android, iOS-ready): pages, Video Grabber, video-site sign-in, platform services</td></tr>
+          <tr><td><code>tests/</code></td><td>Unit tests, including downloads against a local test server</td></tr>
+          <tr><td><code>installer/</code></td><td>Inno Setup script; <code>build-installer.ps1</code> builds the exe and installer</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="company">
+        <img src="assets/icon-256.png" alt="">
+        <div>
+          <p class="fine" style="margin: 0">A product of</p>
+          <h2 style="margin: 2px 0 6px">BitProSoftTech</h2>
+          <p style="margin: 0">Website: <a href="https://bitprosofttech.com">bitprosofttech.com</a> · Phone: <a href="tel:+918299101616">+(91)-82-9910-1616</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 BitProSoftTech and BDM contributors · <a href="https://github.com/mycodeclub/BpstDownloadManager/blob/main/LICENSE">MIT License</a></span>
+    <span>yt-dlp, FFmpeg and Deno are separate projects under their own licenses.</span>
+  </div>
+</footer>
+</body>
+</html>
