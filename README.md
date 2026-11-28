@@ -77,7 +77,7 @@ cd BpstDownloadManager
 dotnet test tests/Bdm.Core.Tests
 dotnet build src/Bdm.App -f net10.0-windows10.0.19041.0     # Windows
 dotnet build src/Bdm.App -f net10.0-android                  # Android
-.\build-installer.ps1 -Version 2.1.0                          # dist\BDM-Setup-2.1.0.exe + BDM-2.1.0-android.apk
+.\build-installer.ps1 -Version 2.1.1                          # dist\BDM-Setup-2.1.1.exe + BDM-2.1.1-android.apk
 ```
 
 ### Releasing an update

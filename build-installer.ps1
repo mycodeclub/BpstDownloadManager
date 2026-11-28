@@ -6,7 +6,7 @@
 #   Windows: same Inno Setup AppId, so Setup finds the installed copy, closes it and replaces it.
 #   Android: same package id (com.bitprosofttech.bdm), a higher versionCode (computed from -Version below)
 #            and the same signing key. Never publish a debug-signed APK: it can't be updated by a release one.
-param([string]$Version = "2.1.0", [switch]$SkipAndroid, [switch]$AllowDebugSigning)
+param([string]$Version = "2.1.1", [switch]$SkipAndroid, [switch]$AllowDebugSigning)
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 New-Item -ItemType Directory -Force dist | Out-Null

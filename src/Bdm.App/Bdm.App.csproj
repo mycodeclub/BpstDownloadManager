@@ -17,8 +17,8 @@
 
 		<ApplicationTitle>BDM</ApplicationTitle>
 		<ApplicationId>com.bitprosofttech.bdm</ApplicationId>
-		<ApplicationDisplayVersion>2.1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>20100</ApplicationVersion>
+		<ApplicationDisplayVersion>2.1.1</ApplicationDisplayVersion>
+		<ApplicationVersion>20101</ApplicationVersion>
 
 		<!-- Windows: plain .exe (no MSIX), Windows App SDK and .NET bundled, packaged with Inno Setup. -->
 		<WindowsPackageType>None</WindowsPackageType>

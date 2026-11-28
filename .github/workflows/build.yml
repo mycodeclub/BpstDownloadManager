@@ -49,7 +49,7 @@ jobs:
         shell: pwsh
         run: |
           $isTag = $env:GITHUB_REF_TYPE -eq 'tag'
-          $version = if ($isTag) { $env:GITHUB_REF_NAME.TrimStart('v') } else { '2.1.0' }
+          $version = if ($isTag) { $env:GITHUB_REF_NAME.TrimStart('v') } else { '2.1.1' }
           # Release tags must be signed with the release key (a debug-signed APK can't update installed copies).
           if ($isTag) { ./build-installer.ps1 -Version $version } else { ./build-installer.ps1 -Version $version -AllowDebugSigning }
           # Stable names, so ".../releases/latest/download/<name>" links on the website never change.

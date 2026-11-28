@@ -2,10 +2,10 @@
 
 All BDM releases. Downloads: [GitHub Releases](https://github.com/mycodeclub/BpstDownloadManager/releases).
 
-## Unreleased
+## 2.1.1 (2026-11-28)
 - **Updates:** the Windows Setup now detects an installed BDM and works as an updater: "Update BDM from x to y" wording, same folder and options, closes the running app, warns before a downgrade (refuses it when run silently).
 - **Android updates:** the version code is derived from the version number on every build, release APKs must be signed with the release key, and optional key rotation (`tools/create-signing-lineage.ps1`) lets phones with the debug-signed 2.0.0 update in place.
-- Docs: update instructions (README, website), release checklist, this changelog. Project metadata now says BDM 2.1.0 instead of BpstVideoDownloader 0.1.0.
+- Docs: update instructions (README, website), release checklist, this changelog. Project metadata now says BDM instead of BpstVideoDownloader 0.1.0.
 
 ## 2.1.0 (2026-11-22)
 - ✨ Smart Finder: search for games, software, e-books & PDFs, documents, courses and music from official stores, free legal downloads and official torrents, with category and Free / Paid filters. Piracy sites are filtered out.

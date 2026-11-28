@@ -8,7 +8,7 @@
 ; Unattended update: BDM-Setup.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART  (a downgrade is refused when silent).
 
 #ifndef AppVersion
-  #define AppVersion "2.1.0"
+  #define AppVersion "2.1.1"
 #endif
 #define AppName "BPST Download Manager"
 #define AppShort "BDM"
