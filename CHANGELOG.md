@@ -2,6 +2,14 @@
 
 All BDM releases. Downloads: [GitHub Releases](https://github.com/mycodeclub/BpstDownloadManager/releases).
 
+## [2.2.0](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.2.0) (2026-11-28)
+- ✨ **Movies and web series in Smart Finder:** new Movies and Web series & TV categories show where a title streams legally in your country (Netflix, Prime Video, JioHotstar, ZEE5, SonyLIV, Apple TV…), where to rent or buy it, and official free streams.
+- **Language filter** for movies and series (Hindi, English, Tamil, Telugu, Malayalam, Kannada, Bengali, Marathi, Punjabi, Gujarati, Korean, Japanese, Spanish, French); typing "in Hindi" or "Tamil dubbed" picks it too. Searches like "Mirzapur season 2 web series" are cleaned up to the title.
+- Optional TMDB API key (Settings → Smart Finder) for exact per-country availability, data by JustWatch via TMDB; without it, direct links to JustWatch and each service.
+- Public-domain films from the Internet Archive (only openly licensed or published 95+ years ago), with official torrents.
+- More legal game sources: GOG search with prices and free DRM-free games, Humble Store, Game Jolt, IndieGala freebies.
+- SourceGuard blocks more piracy sites: pirate movie/TV sites and YTS mirrors, cracked-game sites.
+
 ## [2.1.1](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.1.1) (2026-11-28)
 - **Updates:** the Windows Setup now detects an installed BDM and works as an updater: "Update BDM from x to y" wording, same folder and options, closes the running app, warns before a downgrade (refuses it when run silently).
 - **Android updates:** the version code is derived from the version number on every build, release APKs must be signed with the release key, and optional key rotation (`tools/create-signing-lineage.ps1`) lets phones with the debug-signed 2.0.0 update in place.

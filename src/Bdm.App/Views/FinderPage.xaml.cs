@@ -7,6 +7,7 @@ namespace Bdm.App.Views;
 /// <summary>
 /// Smart Finder: search once for download links of games, software, e-books, documents and other files: where to
 /// buy it, free legal downloads (open-source release files, free games, public-domain files) and official torrents.
+/// For movies and series: the streaming services that carry it, rent/buy and official free streams, by language.
 /// Downloadable results open straight in BDM's Add page.
 /// </summary>
 public partial class FinderPage : ContentPage
@@ -16,13 +17,14 @@ public partial class FinderPage : ContentPage
     private CancellationTokenSource? _cts;
     private FinderIntent? _category;           // null = "All": guess the category from the words
     private FinderPrice _price = FinderPrice.Any;
+    private string? _language;                 // movies and series: wanted language (null = any / from the words)
     private FinderResults? _last;
 
     public FinderPage(DownloadManager manager)
     {
         InitializeComponent();
         _http = manager.Http;
-        _finder = SmartFinder.CreateDefault(manager.Http);
+        _finder = SmartFinder.CreateDefault(manager.Http, () => manager.Settings.TmdbApiKey ?? Environment.GetEnvironmentVariable("BDM_TMDB_KEY"));
         BuildChips();
     }
 
@@ -41,6 +43,20 @@ public partial class FinderPage : ContentPage
                 if (!string.IsNullOrWhiteSpace(QueryEntry.Text)) Search_Clicked(null, EventArgs.Empty);
             };
             CategoryChips.Children.Add(chip);
+        }
+        LanguageChips.Children.Clear();
+        LanguageChips.IsVisible = _category is { } c && c.IsWatchIntent();
+        foreach (var (code, label) in FinderFilters.Languages)
+        {
+            var chip = Chip(label, code == _language);
+            chip.Clicked += (_, _) =>
+            {
+                if (_language == code) return;
+                _language = code;
+                BuildChips();
+                if (!string.IsNullOrWhiteSpace(QueryEntry.Text)) Search_Clicked(null, EventArgs.Empty);
+            };
+            LanguageChips.Children.Add(chip);
         }
         PriceChips.Children.Clear();
         foreach (var (price, label) in FinderFilters.Prices)
@@ -93,7 +109,8 @@ public partial class FinderPage : ContentPage
         BusyRow.IsVisible = true;
         try
         {
-            var final = await _finder.SearchAsync(text, cts.Token, category: _category, onUpdate: partial =>
+            var language = _category is { } c && c.IsWatchIntent() ? _language : null;
+            var final = await _finder.SearchAsync(text, cts.Token, category: _category, language: language, onUpdate: partial =>
                 MainThread.BeginInvokeOnMainThread(() => { if (!cts.IsCancellationRequested) Show(partial); }));
             if (!cts.IsCancellationRequested) Show(final);
         }
@@ -120,9 +137,15 @@ public partial class FinderPage : ContentPage
         if (r.IsComplete && !r.Items.Any(i => _price.Allows(i.Section)))
             ResultsHost.Children.Add(Banner(_price == FinderPrice.Paid ? "No paid sources found for this." : "Nothing found. Try other words or another category.", "#22F59E0B"));
 
-        AddSection(r, FinderSection.BuyOrRent, "🛒  Buy", "Official stores and platforms", "#2563EB");
-        AddSection(r, FinderSection.FreeLegal, "🆓  Free downloads", "Open-source release files, free games, public-domain and openly licensed files", "#16A34A");
+        AddSection(r, FinderSection.Watch, "📺  Watch", "Streaming services in your country", "#DB2777");
+        var watch = r.Intent.IsWatchIntent();
+        AddSection(r, FinderSection.BuyOrRent, watch ? "🎟  Rent or buy" : "🛒  Buy", watch ? "Rent or buy it from official stores" : "Official stores and platforms", "#2563EB");
+        AddSection(r, FinderSection.FreeLegal, watch ? "🆓  Free" : "🆓  Free downloads",
+            watch ? "Official free streams and public-domain films" : "Open-source release files, free games, public-domain and openly licensed files", "#16A34A");
         AddSection(r, FinderSection.LegalTorrent, "🧲  Official torrents", "Torrents published by the makers themselves", "#7C3AED");
+
+        CreditsLabel.Text = string.Join(" ", r.Credits);
+        CreditsLabel.IsVisible = r.Credits.Count > 0;
 
         if (r.IsComplete && r.FailedSources.Count > 0)
             ResultsHost.Children.Add(new Label
@@ -202,7 +225,10 @@ public partial class FinderPage : ContentPage
             download.Clicked += async (_, _) => await AppNavigation.OpenAddAsync(dl);
             buttons.Add(download);
         }
-        var open = new Button { Text = item.Section == FinderSection.BuyOrRent ? "View in store" : "Open", Style = (Style)Application.Current!.Resources["SmallButton"] };
+        var openText = item.Kind is FinderKind.Movie or FinderKind.Series && item.DownloadUrl is null
+            ? (item.Source == "TMDB" ? "Details" : "▶ Watch on " + item.Source)
+            : item.Section == FinderSection.BuyOrRent ? "View in store" : "Open";
+        var open = new Button { Text = openText, Style = (Style)Application.Current!.Resources["SmallButton"] };
         open.Clicked += async (_, _) => await OpenAsync(item.Url);
         buttons.Add(open);
         grid.Add(buttons, 2);

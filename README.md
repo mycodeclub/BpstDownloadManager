@@ -32,6 +32,7 @@ A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.
 | **1000+ other video sites** | yt-dlp (Windows) |
 | **`blob:` / streaming videos** | Video Grabber: open the page, press Play, download the HLS (`.m3u8`), DASH or MP4 stream it detects. HLS uses a built-in downloader (parallel segments, AES-128, resume) on every platform |
 | **Torrents** | Magnet links and `.torrent` files, choose files, DHT, peer exchange, UPnP, fast resume, seeding ratio |
+| **Movies and web series** | Smart Finder shows where they stream legally in your country (Netflix, Prime Video, JioHotstar, ZEE5, SonyLIV…), where to rent or buy them, official free streams, and public-domain films BDM can download |
 
 ## Highlights
 
@@ -41,12 +42,15 @@ A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.
 - **Catches links.** Clipboard capture on Windows, "Share → BDM" on Android, magnet/.torrent file associations, `BDM.exe <link>`.
 - **Facebook and Instagram videos and reels**. Public posts work straight away.
 - **Sign-in for YouTube, Instagram and Facebook** (Settings → Video) for age-restricted, private, members-only and login-only videos. You sign in on the site's own page inside BDM, and the session stays on your device.
-- **Smart Finder.** Search once for download links of games, software, e-books & PDFs, documents, courses and music, with category filters (Games, Software, E-books & PDF, Documents, Courses, Music & audio, Other) and a Free / Paid filter. Results come in three groups:
-  - **Buy:** official stores with prices (Steam, Epic, PlayStation, Xbox, Microsoft Store, Google Play, Udemy, Amazon…).
-  - **Free downloads:** open-source release files from GitHub (pick the installer and BDM downloads it), free and open-source games, F-Droid and Flathub apps, public-domain e-books (Project Gutenberg, Internet Archive), open-access research papers (arXiv), free music.
+- **Smart Finder.** Search once and find it legally: games, software, e-books & PDFs, documents, courses, music, **movies and web series**. Category filters (Games, Software, Courses, E-books & PDF, Documents, Music & audio, Movies, Web series & TV, Other) and a Free / Paid filter. Results come in groups:
+  - **Watch** (movies and series): the streaming services that have it in your country, such as Netflix, Prime Video, JioHotstar, ZEE5, SonyLIV and Apple TV, with a **language filter** (Hindi, English, Tamil, Telugu, Malayalam, Kannada, Bengali, Marathi, Punjabi, Gujarati, Korean, Japanese…). Type it naturally: *"Die Hard 4 in Hindi"*, *"Panchayat web series"*, *"Mirzapur season 2"*.
+  - **Buy / Rent or buy:** official stores with prices (Steam, GOG, Epic, Humble, PlayStation, Xbox, Microsoft Store, Google Play / Google TV, Udemy, Amazon…).
+  - **Free:** open-source release files from GitHub (pick the installer and BDM downloads it), free games (Steam free-to-play, free GOG games, Epic's weekly free games, itch.io, Game Jolt, IndieGala freebies), F-Droid and Flathub apps, official free streams with ads, public-domain films, e-books (Project Gutenberg, Internet Archive), open-access papers (arXiv), free music.
   - **Official torrents:** torrents published by the makers themselves (Linux distributions, Internet Archive).
 
-  Cracks, repacks and piracy sites are never shown; for paid games and software, BDM points to the official stores.
+  Cracks, repacks, pirate movie sites and torrent indexes are never shown; for paid games, software and films, BDM points to the official stores and services. Films on streaming services are copy-protected: watch them in the service's app and use its own Download button for offline viewing.
+
+  **Where-to-watch data (optional):** add a free [TMDB](https://www.themoviedb.org/settings/api) API key under **Settings → Smart Finder** and BDM lists exactly which services carry each title in your country (availability data by JustWatch, via TMDB). Without a key, movie searches show direct links to JustWatch and each service. TMDB lists a film's original language, not every dub, so for dubbed versions check the title's Audio menu in the app. This product uses the TMDB API but is not endorsed or certified by TMDB.
 - **Clear answers for paid streaming services.** Netflix, Prime Video, JioHotstar, Disney+, SonyLIV, ZEE5 and similar links are recognised up front: BDM explains that they are DRM-protected and points you to the service's own offline downloads, instead of failing halfway.
 - **Light and dark themes,** a desktop sidebar and phone navigation, all from one codebase.
 
@@ -73,7 +77,8 @@ Every release stays on GitHub, so you can always get the latest or go back to an
 
 | Version | Date | Windows | Android | Notes |
 |---|---|---|---|---|
-| [2.1.1](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.1.1) | 2026-11-28 | [BDM-Setup-2.1.1.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.1/BDM-Setup-2.1.1.exe) | [BDM-2.1.1-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.1/BDM-2.1.1-android.apk) | **Latest.** Setup updates an installed BDM in place |
+| [2.2.0](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.2.0) | 2026-11-28 | [BDM-Setup-2.2.0.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.2.0/BDM-Setup-2.2.0.exe) | [BDM-2.2.0-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.2.0/BDM-2.2.0-android.apk) | **Latest.** Movies & web series in Smart Finder (where to watch, by language), more legal game sources |
+| [2.1.1](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.1.1) | 2026-11-28 | [BDM-Setup-2.1.1.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.1/BDM-Setup-2.1.1.exe) | [BDM-2.1.1-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.1/BDM-2.1.1-android.apk) | Setup updates an installed BDM in place |
 | [2.1.0](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.1.0) | 2026-11-22 | [BDM-Setup-2.1.0.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.0/BDM-Setup-2.1.0.exe) | [BDM-2.1.0-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.1.0/BDM-2.1.0-android.apk) | Smart Finder, Facebook/Instagram sign-in |
 | [2.0.0](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.0.0) | 2026-11-21 | [BDM-Setup-2.0.0.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.0.0/BDM-Setup-2.0.0.exe) | [BDM-2.0.0-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v2.0.0/BDM-2.0.0-android.apk) | New Windows + Android app (dev-signed APK, see Updating) |
 | [0.1.0](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v0.1.0) | 2026-11-20 | [BpstVideoDownloader-Setup-0.1.0.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/download/v0.1.0/BpstVideoDownloader-Setup-0.1.0.exe) | – | First release (WPF, Windows only) |
@@ -90,7 +95,7 @@ cd BpstDownloadManager
 dotnet test tests/Bdm.Core.Tests
 dotnet build src/Bdm.App -f net10.0-windows10.0.19041.0     # Windows
 dotnet build src/Bdm.App -f net10.0-android                  # Android
-.\build-installer.ps1 -Version 2.1.1                          # dist\BDM-Setup-2.1.1.exe + BDM-2.1.1-android.apk
+.\build-installer.ps1 -Version 2.2.0                          # dist\BDM-Setup-2.2.0.exe + BDM-2.2.0-android.apk
 ```
 
 ### Releasing an update
@@ -111,7 +116,7 @@ Real-internet tests (YouTube download + merge, torrent swarm) are opt-in: set `B
 
 | Path | Contents |
 |---|---|
-| `src/Bdm.Core` | Platform-neutral engine: `SegmentedDownloader`, `HlsDownloader`, `TorrentService` (MonoTorrent), `YoutubeExplodeBackend` + `MediaDownloader` (yt-dlp), `DownloadManager` (queue, Focus, limits, retries, persistence) |
+| `src/Bdm.Core` | Platform-neutral engine: `SegmentedDownloader`, `HlsDownloader`, `TorrentService` (MonoTorrent), `YoutubeExplodeBackend` + `MediaDownloader` (yt-dlp), `DownloadManager` (queue, Focus, limits, retries, persistence), `Finder/` (Smart Finder: store, free-download and where-to-watch sources, `SourceGuard` piracy filter) |
 | `src/Bdm.App` | .NET MAUI app: pages, view models, `Platforms/Windows` (single instance, clipboard, keep-awake), `Platforms/Android` (foreground service, MediaMuxer, share intents), `Platforms/iOS` |
 | `tests/Bdm.Core.Tests` | xUnit tests: segmented/HLS/AES/resume against a local test server, rate limiting, Focus, changed-file detection, torrents |
 | `installer/BDM.iss` | Windows installer and updater (Inno Setup) |
@@ -127,7 +132,7 @@ See [ROADMAP.md](ROADMAP.md): what's still missing in today's download managers,
 
 ## Responsible use
 
-Only download content you have the right to download. Respect copyright and each site's terms. DRM-protected streams (Netflix, Prime Video, JioHotstar, Disney+…) are not supported and won't be: circumventing DRM is illegal in most countries (for example under India's Copyright Act s.65A and the US DMCA). BDM uses MonoTorrent (MIT), YoutubeExplode (LGPL-3.0) and, on Windows, the separate programs yt-dlp, FFmpeg and Deno under their own licenses.
+Only download content you have the right to download. Respect copyright and each site's terms. Smart Finder only lists official stores, official streaming services and legally free sources; known piracy sites are blocked (`SourceGuard`), and that is not configurable. DRM-protected streams (Netflix, Prime Video, JioHotstar, Disney+…) are not supported and won't be: circumventing DRM is illegal in most countries (for example under India's Copyright Act s.65A and the US DMCA). BDM uses MonoTorrent (MIT), YoutubeExplode (LGPL-3.0) and, on Windows, the separate programs yt-dlp, FFmpeg and Deno under their own licenses.
 
 ## License
 

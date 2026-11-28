@@ -47,6 +47,7 @@ public partial class SettingsPage : ContentPage
         DhtSwitch.IsToggled = s.TorrentDht;
         UpnpSwitch.IsToggled = s.TorrentPortForwarding;
         QualityPicker.SelectedItem = MediaQuality.Options.FirstOrDefault(o => o.Id == s.DefaultMediaQuality) ?? MediaQuality.Options[0];
+        TmdbKeyEntry.Text = s.TmdbApiKey ?? "";
         UpdateLabels();
         UpdateSignIn();
         UpdateTools();
@@ -118,6 +119,7 @@ public partial class SettingsPage : ContentPage
         s.TorrentDht = DhtSwitch.IsToggled;
         s.TorrentPortForwarding = UpnpSwitch.IsToggled;
         s.DefaultMediaQuality = (QualityPicker.SelectedItem as MediaQualityOption)?.Id ?? MediaQuality.Best;
+        s.TmdbApiKey = string.IsNullOrWhiteSpace(TmdbKeyEntry.Text) ? null : TmdbKeyEntry.Text.Trim();
         _manager.SaveSettings();
         _manager.Pump();
         SavedLabel.Text = "Saved.";

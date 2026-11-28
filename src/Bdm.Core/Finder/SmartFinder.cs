@@ -5,7 +5,8 @@ namespace Bdm.Core.Finder;
 /// <summary>
 /// Smart Finder: one search for download links of games, software, e-books, documents and other files:
 /// official stores (buy) first, then free legal downloads (open-source releases, free games, public-domain and
-/// openly licensed files) and official torrents. Piracy sites are filtered out.
+/// openly licensed files) and official torrents. For movies and series it shows where they stream legally
+/// (OTT services, rent/buy, free with ads), with a language filter. Piracy sites are filtered out.
 /// </summary>
 public sealed class SmartFinder
 {
@@ -23,7 +24,31 @@ public sealed class SmartFinder
         (FinderIntent.Software, ["software", "app", "apps", "apk", "windows", "program", "tool", "tools", "editor", "antivirus", "vpn",
                                  "exe", "installer", "for pc", "for android", "for mac", "linux", "open source", "iso", "distro", "ubuntu", "driver"]),
         (FinderIntent.Audio, ["song", "songs", "music", "mp3", "album", "audiobook", "audiobooks", "podcast", "soundtrack", "audio"]),
+        (FinderIntent.Series, ["web series", "webseries", "tv series", "tv show", "tv shows", "series", "season", "episode", "episodes",
+                               "anime", "k-drama", "kdrama", "sitcom"]),
+        (FinderIntent.Movie, ["movie", "movies", "film", "films", "full movie", "bollywood", "hollywood", "tollywood", "kollywood",
+                              "dubbed", "ott", "netflix", "prime video", "hotstar", "jiohotstar", "zee5", "sonyliv"]),
     ];
+
+    // Language names (and common spellings) that pick the language filter when typed ("die hard 4 in hindi").
+    private static readonly (string Code, string[] Names)[] LanguageWords =
+    [
+        ("hi", ["hindi"]), ("en", ["english"]), ("ta", ["tamil"]), ("te", ["telugu"]), ("ml", ["malayalam"]),
+        ("kn", ["kannada"]), ("bn", ["bengali", "bangla"]), ("mr", ["marathi"]), ("pa", ["punjabi"]), ("gu", ["gujarati"]),
+        ("ko", ["korean"]), ("ja", ["japanese"]), ("es", ["spanish"]), ("fr", ["french"]),
+    ];
+
+    // Removed from movie/series searches: TMDB and the OTT apps search by title only. Kept small on purpose,
+    // so titles like "The Truman Show" or "Lost in Translation" stay intact.
+    private static readonly string[] WatchNoisePhrases =
+        ["web series", "tv series", "tv shows", "tv show", "full movies", "full movie", "watch online", "prime video", "all seasons", "all episodes", "free download"];
+
+    private static readonly HashSet<string> WatchNoiseWords = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "dubbed", "dub", "ott", "webseries", "streaming", "movie", "movies", "film", "films", "full", "hd", "1080p", "720p", "480p", "4k",
+        "download", "free", "torrent", "torrents", "bollywood", "hollywood", "tollywood", "kollywood",
+        "netflix", "hotstar", "jiohotstar", "zee5", "sonyliv", "season", "seasons", "episode", "episodes",
+    };
 
     private static readonly string[] NoisePhrases =
         ["web series", "short films", "short film", "full movie", "research paper", "pc game", "for pc", "free download", "tv series", "tv show"];
@@ -41,10 +66,15 @@ public sealed class SmartFinder
 
     public SmartFinder(IEnumerable<IFinderProvider> providers) => _providers = providers.ToList();
 
-    public static SmartFinder CreateDefault(HttpClient http) => new(
+    /// <param name="tmdbApiKey">TMDB API key (v3 key or v4 read token) for "where to watch" data; without one, movie
+    /// and series searches still get direct links to the streaming services.</param>
+    public static SmartFinder CreateDefault(HttpClient http, Func<string?>? tmdbApiKey = null) => new(
     [
+        new TmdbWatchProvider(http, tmdbApiKey ?? (() => Environment.GetEnvironmentVariable("BDM_TMDB_KEY"))),
+        new WatchLinksProvider(),
         new StoreLinksProvider(),
         new SteamProvider(http),
+        new GogProvider(http),
         new InternetArchiveProvider(http),
         new GutenbergProvider(http),
         new GitHubProvider(http),
@@ -72,6 +102,39 @@ public sealed class SmartFinder
         return words.Count == 0 ? text.Trim() : string.Join(' ', words);
     }
 
+    /// <summary>Language picked by a word in the query ("in hindi", "tamil dubbed" → "hi", "ta"), or null.</summary>
+    public static string? DetectLanguage(string text)
+    {
+        var words = text.ToLowerInvariant().Split((char[])[' ', ',', '\t', '-', '(', ')'], StringSplitOptions.RemoveEmptyEntries);
+        foreach (var (code, names) in LanguageWords)
+            if (names.Any(n => words.Contains(n)))
+                return code;
+        return null;
+    }
+
+    /// <summary>
+    /// The title to search streaming services for: "die hard 4 in hindi" → "die hard 4",
+    /// "Mirzapur season 2 web series" → "Mirzapur". The original if nothing is left.
+    /// </summary>
+    public static string WatchTerms(string text)
+    {
+        const System.Text.RegularExpressions.RegexOptions I = System.Text.RegularExpressions.RegexOptions.IgnoreCase;
+        var languageNames = LanguageWords.SelectMany(l => l.Names).ToList();
+        var t = System.Text.RegularExpressions.Regex.Replace(text, @"\b(season|episode|ep)\s*\d+\b", " ", I);
+        // A language is a filter only next to "in"/"dubbed" or at the end ("in hindi", "tamil dubbed", "… hindi"),
+        // so it stays in titles like "Hindi Medium" or "English Vinglish".
+        var lang = "(" + string.Join('|', languageNames) + ")";
+        t = System.Text.RegularExpressions.Regex.Replace(t, @"\b(dubbed\s+)?in\s+" + lang + @"\b", " ", I);
+        t = System.Text.RegularExpressions.Regex.Replace(t, @"\b" + lang + @"\s+(dubbed|dub|audio|version)\b", " ", I);
+        t = System.Text.RegularExpressions.Regex.Replace(t, @"(?<=\S\s+)" + lang + @"\s*$", " ", I);
+        foreach (var phrase in WatchNoisePhrases)
+            t = System.Text.RegularExpressions.Regex.Replace(t, @"\b" + phrase + @"\b", " ", I);
+        t = System.Text.RegularExpressions.Regex.Replace(t, @"\bseries\s*$", " ", I);
+        var words = t.Split((char[])[' ', ',', '\t'], StringSplitOptions.RemoveEmptyEntries)
+            .Where(w => !WatchNoiseWords.Contains(w)).ToList();
+        return words.Count == 0 ? text.Trim() : string.Join(' ', words);
+    }
+
     public static string CurrentRegion()
     {
         try { return RegionInfo.CurrentRegion.TwoLetterISORegionName.ToUpperInvariant(); }
@@ -83,11 +146,19 @@ public sealed class SmartFinder
     /// a source answers, so a slow source doesn't hold up the others. <paramref name="category"/> is the category the
     /// user picked; null means "guess it from the words".
     /// </summary>
+    /// <param name="language">Wanted language for movies and series (ISO 639-1); null = taken from the words, if any.</param>
     public async Task<FinderResults> SearchAsync(string text, CancellationToken ct = default, string? region = null,
-        Action<FinderResults>? onUpdate = null, FinderIntent? category = null)
+        Action<FinderResults>? onUpdate = null, FinderIntent? category = null, string? language = null)
     {
         text = text.Trim();
-        var query = new FinderQuery(text, category ?? DetectIntent(text), region ?? CurrentRegion()) { Terms = CoreTerms(text) };
+        language ??= DetectLanguage(text);
+        var intent = category ?? DetectIntent(text);
+        if (category is null && intent == FinderIntent.Any && language is not null) intent = FinderIntent.Movie; // "die hard 4 in hindi"
+        var query = new FinderQuery(text, intent, region ?? CurrentRegion())
+        {
+            Terms = intent.IsWatchIntent() ? WatchTerms(text) : CoreTerms(text),
+            Language = intent.IsWatchIntent() || intent == FinderIntent.Any ? language : null,
+        };
         if (text.Length == 0) return new FinderResults { Query = text, Intent = query.Intent };
 
         var answers = new (IReadOnlyList<FinderResult>? Items, bool Failed)[_providers.Count];
@@ -129,8 +200,21 @@ public sealed class SmartFinder
             if (seen.Add(item.Section + "|" + (item.DownloadUrl ?? item.Url)))
                 results.Items.Add(item);
 
+        results.Credits.AddRange(results.Items.Select(i => i.Credit).OfType<string>().Distinct());
         results.FailedSources.AddRange(answers.Select((a, i) => (a, i)).Where(x => x.a.Failed).Select(x => _providers[x.i].Name));
         results.PendingSources.AddRange(answers.Select((a, i) => (a, i)).Where(x => x.a.Items is null).Select(x => _providers[x.i].Name));
+
+        if (query.Intent.IsWatchIntent())
+        {
+            if (results.IsComplete)
+            {
+                if (query.Language is { } lang)
+                    results.Notices.Add($"{FinderFilters.LanguageName(lang)} audio: streaming services don't publish which dubs they carry. Open the title and check its Audio & Subtitles (or Languages) menu.");
+                if (!results.Items.Any(i => !i.IsSearchLink && i.Section is FinderSection.Watch or FinderSection.BuyOrRent))
+                    results.Notices.Add("Use the service links below to look it up. Films on streaming services are copy-protected: watch them in the service's app, and use the app's own Download button to watch offline.");
+            }
+            return results;
+        }
 
         var freeCopies = results.In(FinderSection.FreeLegal).Where(i => !i.IsSearchLink && (query.Intent != FinderIntent.Game || i.Kind == FinderKind.Game));
         if (results.IsComplete && !freeCopies.Any())
@@ -150,6 +234,8 @@ public sealed class SmartFinder
         FinderIntent.Book => kind is FinderKind.Book,
         FinderIntent.Document => kind is FinderKind.Document,
         FinderIntent.Audio => kind is FinderKind.Audio,
+        FinderIntent.Movie => kind is FinderKind.Movie,
+        FinderIntent.Series => kind is FinderKind.Series,
         _ => true,
     };
 }

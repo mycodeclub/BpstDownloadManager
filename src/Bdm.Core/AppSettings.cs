@@ -61,6 +61,13 @@ public sealed class AppSettings
 
     public bool AutoUpdateYtDlp { get; set; } = true;
 
+    // ---- Smart Finder
+    /// <summary>
+    /// TMDB API key (v3 key or v4 read access token, free from themoviedb.org) for "where to watch" results on
+    /// movies and series. Empty = the Finder shows direct links to the streaming services instead.
+    /// </summary>
+    public string? TmdbApiKey { get; set; }
+
     /// <summary>Desktop: install yt-dlp/FFmpeg automatically the first time a video is downloaded.</summary>
     public bool AutoInstallVideoTools { get; set; } = true;
     public DateTime LastYtDlpUpdateCheckUtc { get; set; }

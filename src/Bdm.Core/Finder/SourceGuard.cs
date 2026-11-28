@@ -1,8 +1,8 @@
 namespace Bdm.Core.Finder;
 
 /// <summary>
-/// Keeps Smart Finder to genuine sources: results on known piracy sites (pirate torrent indexes,
-/// cracked-game and warez sites, shadow libraries, leaked-course sites) are never shown.
+/// Keeps Smart Finder to genuine sources: results on known piracy sites (pirate torrent indexes, pirate movie and TV
+/// sites, cracked-game and warez sites, shadow libraries, leaked-course sites) are never shown.
 /// </summary>
 public static class SourceGuard
 {
@@ -12,8 +12,14 @@ public static class SourceGuard
         "thepiratebay.org", "piratebay", "1337x.to", "1337x", "rarbg", "yts.mx", "yts.am", "yts.lt", "yts",
         "limetorrents", "torrentgalaxy", "kickass", "katcr", "eztv", "torlock", "torrentz", "zooqle",
         "magnetdl", "bitsearch", "btdig", "solidtorrents", "glodls", "idope", "nyaa.si",
+        "ytsrs", "yts-official", "ytstv", "torrentquest", "torrentdownloads", "torrentfunk", "1377x", "x1337x",
+        // Movie and TV piracy (streaming and direct-download sites, many targeting India)
+        "tamilrockers", "movierulz", "filmyzilla", "filmywap", "filmyhit", "9xmovies", "vegamovies", "hdhub4u", "katmoviehd",
+        "bolly4u", "moviesflix", "mkvcinemas", "ssrmovies", "worldfree4u", "khatrimaza", "extramovies", "isaimini", "tamilyogi",
+        "tamilblasters", "moviesda", "jalshamoviez", "skymovieshd", "mp4moviez", "filmy4wap", "moviesverse", "uwatchfree",
+        "fmovies", "123movies", "gomovies", "putlocker", "soap2day", "sflix", "lookmovie", "hdtoday", "flixtor", "myflixer", "hurawatch",
         // Cracked games and warez
-        "fitgirl-repacks", "dodi-repacks", "igg-games", "steamunlocked", "oceanofgames", "getintopc",
+        "torgamez", "fitgirl-repacks", "dodi-repacks", "igg-games", "steamunlocked", "oceanofgames", "getintopc",
         "skidrowreloaded", "skidrow-games", "crackwatch", "repack-games", "gog-games", "ova-games",
         "filecr", "softonic-crack", "apkpure-mod", "an1.com", "happymod", "moddroid",
         // Shadow libraries

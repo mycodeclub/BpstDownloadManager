@@ -41,6 +41,13 @@ public class FinderTests
     [InlineData("https://store.steampowered.com/app/1/", false)]
     [InlineData("https://www.youtube.com/watch?v=x", false)]
     [InlineData("https://ytsomething.com/", false)]
+    [InlineData("https://ytsrs.bz/movies/die-hard", true)]
+    [InlineData("https://torgamez.org/game/1", true)]
+    [InlineData("https://www.movierulz.vpn/x", true)]
+    [InlineData("https://vegamovies3.tv/x", true)]
+    [InlineData("https://www.netflix.com/search?q=x", false)]
+    [InlineData("https://www.hotstar.com/in", false)]
+    [InlineData("https://www.justwatch.com/in/search?q=x", false)]
     [InlineData("not a url", false)]
     public void Blocks_piracy_sites_only(string url, bool blocked) => Assert.Equal(blocked, SourceGuard.IsBlocked(url));
 
@@ -315,5 +322,172 @@ public class FinderTests
             ]}
             """);
         Assert.Equal(["OpenCut"], GitHubProvider.Parse(doc.RootElement, FinderKind.Software, "video editor").Select(r => r.Title));
+    }
+
+    // ---- movies and web series
+
+    [Theory]
+    [InlineData("die hard 4 movie", FinderIntent.Movie)]
+    [InlineData("Panchayat web series", FinderIntent.Series)]
+    [InlineData("breaking bad season 3", FinderIntent.Series)]
+    [InlineData("pushpa 2 hindi dubbed", FinderIntent.Movie)]
+    [InlineData("hindi songs", FinderIntent.Audio)]
+    public void Detects_movies_and_series(string text, FinderIntent intent) => Assert.Equal(intent, SmartFinder.DetectIntent(text));
+
+    [Theory]
+    [InlineData("die hard 4 in hindi", "hi")]
+    [InlineData("KGF tamil dubbed", "ta")]
+    [InlineData("die hard 4", null)]
+    public void Detects_the_wanted_language(string text, string? code) => Assert.Equal(code, SmartFinder.DetectLanguage(text));
+
+    [Theory]
+    [InlineData("die hard 4 in hindi", "die hard 4")]
+    [InlineData("Mirzapur season 2 web series", "Mirzapur")]
+    [InlineData("pushpa 2 hindi dubbed full movie", "pushpa 2")]
+    [InlineData("KGF hindi", "KGF")]
+    [InlineData("Breaking Bad season 3 episode 2", "Breaking Bad")]
+    [InlineData("Hindi Medium", "Hindi Medium")]
+    [InlineData("English Vinglish", "English Vinglish")]
+    [InlineData("The Truman Show", "The Truman Show")]
+    [InlineData("Lost in Translation", "Lost in Translation")]
+    public void Watch_searches_keep_only_the_title(string text, string terms) => Assert.Equal(terms, SmartFinder.WatchTerms(text));
+
+    [Fact]
+    public async Task A_language_word_alone_means_a_movie_search()
+    {
+        FinderQuery? seen = null;
+        await new SmartFinder([new SpyProvider(q => seen = q)]).SearchAsync("die hard 4 in hindi", region: "IN");
+        Assert.NotNull(seen);
+        Assert.Equal(FinderIntent.Movie, seen!.Intent);
+        Assert.Equal("hi", seen.Language);
+        Assert.Equal("die hard 4", seen.Terms);
+    }
+
+    [Theory]
+    [InlineData(FinderPrice.Paid, FinderSection.Watch, true)]
+    [InlineData(FinderPrice.Free, FinderSection.Watch, false)]
+    [InlineData(FinderPrice.Any, FinderSection.Watch, true)]
+    public void Streaming_counts_as_paid(FinderPrice price, FinderSection section, bool shown) => Assert.Equal(shown, price.Allows(section));
+
+    [Fact]
+    public void Tmdb_search_puts_the_wanted_language_first_and_skips_people()
+    {
+        using var doc = JsonDocument.Parse("""
+            {"results":[
+              {"id":1,"media_type":"movie","title":"Drishyam","release_date":"2013-12-19","original_language":"ml","vote_count":900,"poster_path":"/a.jpg"},
+              {"id":2,"media_type":"person","name":"Someone","vote_count":0},
+              {"id":3,"media_type":"movie","title":"Drishyam","release_date":"2015-07-31","original_language":"hi","vote_count":700},
+              {"id":4,"media_type":"tv","name":"Obscure show","first_air_date":"2020-01-01","original_language":"en","vote_count":3}
+            ]}
+            """);
+        var titles = TmdbWatchProvider.ParseSearch(doc.RootElement, FinderIntent.Any, "hi");
+        Assert.Equal([3L, 1L], titles.Select(t => t.Id));
+        Assert.Equal("2015", titles[0].Year);
+        Assert.Equal("movie", titles[0].MediaType);
+    }
+
+    [Fact]
+    public void Tmdb_providers_become_watch_rent_buy_and_free_results()
+    {
+        using var doc = JsonDocument.Parse("""
+            {"id":1571,"results":{
+              "IN":{"link":"https://www.themoviedb.org/movie/1571-live-free-or-die-hard/watch?locale=IN",
+                    "flatrate":[{"provider_id":2336,"provider_name":"JioHotstar"},{"provider_id":8,"provider_name":"Netflix"}],
+                    "rent":[{"provider_id":3,"provider_name":"Google Play Movies"}],
+                    "buy":[{"provider_id":3,"provider_name":"Google Play Movies"}],
+                    "ads":[{"provider_id":9,"provider_name":"Amazon MX Player"}]},
+              "US":{"link":"https://x","flatrate":[{"provider_id":15,"provider_name":"Hulu"}]}}}
+            """);
+        var t = new TmdbWatchProvider.Title(1571, "movie", "Live Free or Die Hard", "2007", "en", "/p.jpg");
+        var r = TmdbWatchProvider.ParseProviders(doc.RootElement, "IN", t);
+        Assert.DoesNotContain(r, x => x.Source == "Hulu");
+        var hotstar = Assert.Single(r, x => x.Source == "JioHotstar");
+        Assert.Equal(FinderSection.Watch, hotstar.Section);
+        Assert.Equal("Live Free or Die Hard (2007)", hotstar.Title);
+        Assert.StartsWith("https://www.themoviedb.org/movie/1571", hotstar.Url);
+        Assert.Equal("https://www.netflix.com/search?q=Live%20Free%20or%20Die%20Hard", Assert.Single(r, x => x.Source == "Netflix").Url);
+        Assert.Equal("Rent or buy", Assert.Single(r, x => x.Source == "Google Play Movies").Price);
+        Assert.Equal(FinderSection.FreeLegal, Assert.Single(r, x => x.Source == "Amazon MX Player").Section);
+        Assert.All(r, x => Assert.Equal(TmdbWatchProvider.CreditText, x.Credit));
+        Assert.Equal(r.Count, r.Select(x => x.Section + x.Url).Distinct().Count()); // not merged away as duplicates
+    }
+
+    [Fact]
+    public void Tmdb_title_not_streaming_in_the_country_says_so()
+    {
+        using var doc = JsonDocument.Parse("""{"id":1,"results":{}}""");
+        var r = Assert.Single(TmdbWatchProvider.ParseProviders(doc.RootElement, "IN", new TmdbWatchProvider.Title(1, "tv", "Show", null, "en", null)));
+        Assert.Equal(FinderKind.Series, r.Kind);
+        Assert.Contains("Not on any streaming service", r.Detail);
+    }
+
+    [Fact]
+    public async Task Without_a_tmdb_key_movie_searches_still_get_service_links()
+    {
+        var finder = new SmartFinder([new TmdbWatchProvider(new HttpClient(new FailingHandler()), () => null), new WatchLinksProvider()]);
+        var r = await finder.SearchAsync("die hard 4 in hindi", region: "IN");
+        Assert.Empty(r.FailedSources);
+        Assert.Contains(r.Items, i => i.Source == "JustWatch" && i.Url == "https://www.justwatch.com/in/search?q=die%20hard%204");
+        Assert.Contains(r.Items, i => i.Source == "JioHotstar");
+        Assert.Contains(r.Notices, n => n.StartsWith("Hindi audio", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Watch_links_are_only_for_movies_and_series()
+    {
+        Assert.Empty(await new WatchLinksProvider().SearchAsync(new FinderQuery("gta", FinderIntent.Game, "IN"), default));
+        var us = await new WatchLinksProvider().SearchAsync(new FinderQuery("x", FinderIntent.Series, "US"), default);
+        Assert.DoesNotContain(us, l => l.Source == "JioHotstar");
+        Assert.All(us, l => Assert.Equal(FinderKind.Series, l.Kind));
+    }
+
+    [Fact]
+    public void Gog_games_with_prices_and_free_installers()
+    {
+        using var doc = JsonDocument.Parse("""
+            {"products":[
+              {"title":"Reigns: The Witcher","storeLink":"https://www.gog.com/en/game/reigns_the_witcher","developers":["Nerial"],
+               "price":{"final":"$4.79","finalMoney":{"amount":"4.79","currency":"USD"}}},
+              {"title":"Gwent","storeLink":"https://www.gog.com/en/game/gwent","price":{"finalMoney":{"amount":"0.00","currency":"USD"}}},
+              {"title":"Coming soon","storeLink":"https://www.gog.com/en/game/soon","price":null}
+            ]}
+            """);
+        var r = GogProvider.Parse(doc.RootElement);
+        Assert.Equal(2, r.Count);
+        Assert.Equal(FinderSection.BuyOrRent, r[0].Section);
+        Assert.Equal("USD 4.79", r[0].Price);
+        Assert.Equal(FinderSection.FreeLegal, r[1].Section);
+        Assert.Equal("Free", r[1].Price);
+    }
+
+    [Fact]
+    public void Archive_films_must_be_old_enough_or_openly_licensed()
+    {
+        using var doc = JsonDocument.Parse("""
+            {"response":{"docs":[
+              {"identifier":"nosferatu","title":"Nosferatu","mediatype":"movies","year":1922},
+              {"identifier":"newfilm","title":"A 2007 action film","mediatype":"movies","year":"2007"},
+              {"identifier":"ccfilm","title":"Big Buck Bunny","mediatype":"movies","year":"2008","licenseurl":"http://creativecommons.org/licenses/by/3.0/"}
+            ]}}
+            """);
+        var r = InternetArchiveProvider.Parse(doc.RootElement, FinderIntent.Movie);
+        Assert.Equal(["Nosferatu", "Big Buck Bunny"], r.Where(x => x.Section == FinderSection.FreeLegal).Select(x => x.Title));
+        Assert.All(r, x => Assert.Equal(FinderKind.Movie, x.Kind));
+    }
+
+    [Theory]
+    [InlineData("1930", 2026, true)]
+    [InlineData("1931", 2026, false)]
+    [InlineData("2007", 2026, false)]
+    [InlineData(null, 2026, false)]
+    [InlineData("1922-05-01", 2026, true)]
+    public void Public_domain_by_age(string? year, int now, bool pd) => Assert.Equal(pd, InternetArchiveProvider.IsPublicDomainByAge(year, now));
+
+    [Fact]
+    public async Task More_legal_game_stores()
+    {
+        var links = await new StoreLinksProvider().SearchAsync(new FinderQuery("x", FinderIntent.Game, "IN"), default);
+        foreach (var source in new[] { "GOG", "Humble Store", "Game Jolt", "IndieGala" })
+            Assert.Contains(links, l => l.Source == source);
     }
 }

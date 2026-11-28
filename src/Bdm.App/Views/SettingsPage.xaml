@@ -88,6 +88,17 @@
                 </VerticalStackLayout>
             </Border>
 
+            <!-- Smart Finder -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Smart Finder" Style="{StaticResource SectionTitle}" />
+                    <Label Text="TMDB API key (optional, for movies and web series)" FontAttributes="Bold" />
+                    <Entry x:Name="TmdbKeyEntry" IsPassword="True" Placeholder="Paste your TMDB API key or read access token" />
+                    <Label Style="{StaticResource Muted}" FontSize="12" LineBreakMode="WordWrap"
+                           Text="With a free key from themoviedb.org (Settings → API), Smart Finder shows which streaming services in your country have a movie or series, and where to rent or buy it. Without one it shows direct links to JustWatch and the streaming services." />
+                </VerticalStackLayout>
+            </Border>
+
             <!-- Video tools (Windows) -->
             <Border x:Name="ToolsCard" Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="8">
