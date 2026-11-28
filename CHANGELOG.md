@@ -10,7 +10,7 @@ All BDM releases. Downloads: [GitHub Releases](https://github.com/mycodeclub/Bps
 - More legal game sources: GOG search with prices and free DRM-free games, Humble Store, Game Jolt, IndieGala freebies.
 - SourceGuard blocks more piracy sites: pirate movie/TV sites and YTS mirrors, cracked-game sites.
 
-## [2.1.1](https://github.com/mycodeclub/BpstDownloadManager/releases/tag/v2.1.1) (2026-11-28)
+## 2.1.1 (2026-11-28, not released separately: included in 2.2.0)
 - **Updates:** the Windows Setup now detects an installed BDM and works as an updater: "Update BDM from x to y" wording, same folder and options, closes the running app, warns before a downgrade (refuses it when run silently).
 - **Android updates:** the version code is derived from the version number on every build, release APKs must be signed with the release key, and optional key rotation (`tools/create-signing-lineage.ps1`) lets phones with the debug-signed 2.0.0 update in place.
 - Docs: "All versions" download table (README, website) with the latest and every earlier release; update instructions, release checklist, this changelog. Project metadata now says BDM instead of BpstVideoDownloader 0.1.0.
