@@ -6,8 +6,8 @@
 A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.com">bitprosofttech.com</a> · +(91)-82-9910-1616</p>
 
 <p align="center">
-  <a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-Setup.exe"><b>⬇ Windows</b></a> ·
-  <a href="https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-android.apk"><b>⬇ Android</b></a> ·
+  <a href="https://mycodeclub.github.io/BpstDownloadManager/download/windows/"><b>⬇ Windows</b></a> ·
+  <a href="https://mycodeclub.github.io/BpstDownloadManager/download/android/"><b>⬇ Android</b></a> ·
   <a href="https://mycodeclub.github.io/BpstDownloadManager/">Project page</a> ·
   <a href="https://github.com/mycodeclub/BpstDownloadManager/releases">All releases</a>
 </p>
@@ -56,8 +56,8 @@ A product of <strong>BitProSoftTech</strong> · <a href="https://bitprosofttech.
 
 ## Install
 
-- **Windows 10/11:** [BDM-Setup.exe](https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-Setup.exe). Per-user install, no admin rights needed, and it upgrades BpstVideoDownloader / VeloxDM 0.x and keeps your downloads and settings.
-- **Android 8+:** [BDM-android.apk](https://github.com/mycodeclub/BpstDownloadManager/releases/latest/download/BDM-android.apk). Allow "Install unknown apps" for your browser. Files are saved to **Download/BDM**.
+- **Windows 10/11:** [BDM-Setup.exe](https://mycodeclub.github.io/BpstDownloadManager/download/windows/). Per-user install, no admin rights needed, and it upgrades BpstVideoDownloader / VeloxDM 0.x and keeps your downloads and settings.
+- **Android 8+:** [BDM-android.apk](https://mycodeclub.github.io/BpstDownloadManager/download/android/). Allow "Install unknown apps" for your browser. Files are saved to **Download/BDM**.
 
 ### Updating
 
